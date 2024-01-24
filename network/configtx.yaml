@@ -1,0 +1,157 @@
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererOrgMSP
+    MSPDir: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererOrgMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererOrgMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererOrgMSP.admin')"
+    OrdererEndpoints:
+      - orderer.ssm.yeyu.tech:7050
+  - &EducationBureau
+    Name: EducationBureau
+    ID: EducationBureauMSP
+    MSPDir: crypto-config/peerOrganizations/edb.ssm.yeyu.tech/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('EducationBureauMSP.admin', 'EducationBureauMSP.peer', 'EducationBureauMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('EducationBureauMSP.admin', 'EducationBureauMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('EducationBureauMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('EducationBureauMSP.peer')"
+  - &EduWdu
+    Name: EduWdu
+    ID: EduWduMSP
+    MSPDir: crypto-config/peerOrganizations/wdu.ssm.yeyu.tech/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('EduWduMSP.admin', 'EduWduMSP.peer', 'EduWduMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('EduWduMSP.admin', 'EduWduMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('EduWduMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('EduWduMSP.peer')"
+  - &EduHgpu
+    Name: EduHgpu
+    ID: EduHgpuMSP
+    MSPDir: crypto-config/peerOrganizations/hgpu.ssm.yeyu.tech/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('EduHgpuMSP.admin', 'EduHgpuMSP.peer', 'EduHgpuMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('EduHgpuMSP.admin', 'EduHgpuMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('EduHgpuMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('EduHgpuMSP.peer')"
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_5: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  Addresses:
+    - orderer0.orderer.ssm.yeyu.tech:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+Profiles:
+  ChannelUsingRaft:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      OrdererType: etcdraft
+      EtcdRaft:
+        Consenters:
+          - Host: orderer0.orderer.ssm.yeyu.tech
+            Port: 7050
+            ServerTLSCert: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/orderers/orderer0.orderer.ssm.yeyu.tech/tls/server.crt
+            ClientTLSCert: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/orderers/orderer0.orderer.ssm.yeyu.tech/tls/server.crt
+      Organizations:
+        - *OrdererOrg
+      Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *EducationBureau
+        - *EduWdu
+        - *EduHgpu
+      Capabilities: *ApplicationCapabilities

@@ -1,0 +1,29 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.ssm.yeyu.tech
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+PeerOrgs:
+  - Name: EducationBureau
+    Domain: edb.ssm.yeyu.tech
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+  
+  - Name: EduWdu
+    Domain: wdu.ssm.yeyu.tech
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: EduHgpu
+    Domain: hgpu.ssm.yeyu.tech
+    Template:
+      Count: 1
+    Users:
+      Count: 1
