@@ -1,71 +1,55 @@
+---
 Organizations:
-  - &OrdererOrg
-    Name: OrdererOrg
-    ID: OrdererOrgMSP
-    MSPDir: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/msp
+  - &School1 # 定义学校1作为Peer组织
+    Name: School1MSP
+    ID: School1MSP
+    MSPDir: crypto-config/peerOrganizations/school1.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('OrdererOrgMSP.member')"
+        Rule: "OR('School1MSP.member')"
       Writers:
         Type: Signature
-        Rule: "OR('OrdererOrgMSP.member')"
+        Rule: "OR('School1MSP.member')"
       Admins:
         Type: Signature
-        Rule: "OR('OrdererOrgMSP.admin')"
-    OrdererEndpoints:
-      - orderer.ssm.yeyu.tech:7050
-  - &EducationBureau
-    Name: EducationBureau
-    ID: EducationBureauMSP
-    MSPDir: crypto-config/peerOrganizations/edb.ssm.yeyu.tech/msp
-    Policies:
-      Readers:
-        Type: Signature
-        Rule: "OR('EducationBureauMSP.admin', 'EducationBureauMSP.peer', 'EducationBureauMSP.client')"
-      Writers:
-        Type: Signature
-        Rule: "OR('EducationBureauMSP.admin', 'EducationBureauMSP.client')"
-      Admins:
-        Type: Signature
-        Rule: "OR('EducationBureauMSP.admin')"
+        Rule: "OR('School1MSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('EducationBureauMSP.peer')"
-  - &EduWdu
-    Name: EduWdu
-    ID: EduWduMSP
-    MSPDir: crypto-config/peerOrganizations/wdu.ssm.yeyu.tech/msp
+        Rule: "OR('School1MSP.peer')"
+
+  - &School2 # 定义学校2作为Peer组织
+    Name: School2MSP
+    ID: School2MSP
+    MSPDir: crypto-config/peerOrganizations/school2.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('EduWduMSP.admin', 'EduWduMSP.peer', 'EduWduMSP.client')"
+        Rule: "OR('School2MSP.member')"
       Writers:
         Type: Signature
-        Rule: "OR('EduWduMSP.admin', 'EduWduMSP.client')"
+        Rule: "OR('School2MSP.member')"
       Admins:
         Type: Signature
-        Rule: "OR('EduWduMSP.admin')"
+        Rule: "OR('School2MSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('EduWduMSP.peer')"
-  - &EduHgpu
-    Name: EduHgpu
-    ID: EduHgpuMSP
-    MSPDir: crypto-config/peerOrganizations/hgpu.ssm.yeyu.tech/msp
+        Rule: "OR('School2MSP.peer')"
+
+  - &EducationBoard # 定义教育局作为Orderer组织
+    Name: EducationBoardOrdererMSP
+    ID: EducationBoardOrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/board.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('EduHgpuMSP.admin', 'EduHgpuMSP.peer', 'EduHgpuMSP.client')"
+        Rule: "OR('EducationBoardOrdererMSP.member')"
       Writers:
         Type: Signature
-        Rule: "OR('EduHgpuMSP.admin', 'EduHgpuMSP.client')"
+        Rule: "OR('EducationBoardOrdererMSP.member')"
       Admins:
         Type: Signature
-        Rule: "OR('EduHgpuMSP.admin')"
-      Endorsement:
-        Type: Signature
-        Rule: "OR('EduHgpuMSP.peer')"
+        Rule: "OR('EducationBoardOrdererMSP.admin')"
 
 Capabilities:
   Channel: &ChannelCapabilities
@@ -87,18 +71,19 @@ Application: &ApplicationDefaults
     Admins:
       Type: ImplicitMeta
       Rule: "MAJORITY Admins"
-    LifecycleEndorsement:
-      Type: ImplicitMeta
-      Rule: "MAJORITY Endorsement"
-    Endorsement:
-      Type: ImplicitMeta
-      Rule: "MAJORITY Endorsement"
   Capabilities:
     <<: *ApplicationCapabilities
 
 Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.board.edu.cn
+        Port: 7050
+        ClientTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
+        ServerTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
   Addresses:
-    - orderer0.orderer.ssm.yeyu.tech:7050
+    - orderer.board.edu.cn:7050
   BatchTimeout: 2s
   BatchSize:
     MaxMessageCount: 10
@@ -134,24 +119,22 @@ Channel: &ChannelDefaults
     <<: *ChannelCapabilities
 
 Profiles:
-  ChannelUsingRaft:
+  EducationNetwork:
     <<: *ChannelDefaults
     Orderer:
       <<: *OrdererDefaults
-      OrdererType: etcdraft
-      EtcdRaft:
-        Consenters:
-          - Host: orderer0.orderer.ssm.yeyu.tech
-            Port: 7050
-            ServerTLSCert: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/orderers/orderer0.orderer.ssm.yeyu.tech/tls/server.crt
-            ClientTLSCert: crypto-config/ordererOrganizations/orderer.ssm.yeyu.tech/orderers/orderer0.orderer.ssm.yeyu.tech/tls/server.crt
       Organizations:
-        - *OrdererOrg
+        - *EducationBoard
       Capabilities: *OrdererCapabilities
     Application:
       <<: *ApplicationDefaults
       Organizations:
-        - *EducationBureau
-        - *EduWdu
-        - *EduHgpu
+        - *School1
+        - *School2
       Capabilities: *ApplicationCapabilities
+    Consortiums:
+      EducationConsortium:
+        Organizations:
+          - *School1
+          - *School2
+    Consortium: EducationConsortium

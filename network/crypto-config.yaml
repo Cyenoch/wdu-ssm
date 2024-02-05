@@ -1,28 +1,25 @@
-OrdererOrgs:
-  - Name: Orderer
-    Domain: orderer.ssm.yeyu.tech
-    Template:
-      Count: 1
-    Users:
-      Count: 1
-
 PeerOrgs:
-  - Name: EducationBureau
-    Domain: edb.ssm.yeyu.tech
+  - &School1
+    Name: School1MSP
+    Domain: school1.edu.cn
+    EnableNodeOUs: true
     Template:
       Count: 1
     Users:
       Count: 1
-  
-  - Name: EduWdu
-    Domain: wdu.ssm.yeyu.tech
+  - &School2
+    Name: School2MSP
+    Domain: school2.edu.cn
+    EnableNodeOUs: true
     Template:
       Count: 1
     Users:
       Count: 1
-
-  - Name: EduHgpu
-    Domain: hgpu.ssm.yeyu.tech
+OrdererOrgs:
+  - &EducationBoard
+    Name: EducationBoardMSP
+    Domain: board.edu.cn
+    EnableNodeOUs: true
     Template:
       Count: 1
     Users:
