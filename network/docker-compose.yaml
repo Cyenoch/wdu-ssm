@@ -1,0 +1,91 @@
+version: '2'
+
+services:
+  # Orderer服务
+  orderer.board.edu.cn:
+    container_name: orderer.board.edu.cn
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=EducationBoardOrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+        - ./system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls:/var/hyperledger/orderer/tls
+    ports:
+      - "7050:7050"
+    networks:
+      - ssm
+
+  # Peer0 of School1
+  peer0.school1.edu.cn:
+    container_name: peer0.school1.edu.cn
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_PEER_ID=peer0.school1.edu.cn
+      - CORE_PEER_ADDRESS=peer0.school1.edu.cn:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.school1.edu.cn:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school1.edu.cn:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school1.edu.cn:7051
+      - CORE_PEER_LOCALMSPID=School1MSP
+      - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    volumes:
+        - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
+    ports:
+      - "7051:7051"
+      - "7053:7053"
+    networks:
+      - ssm
+
+  # Peer0 of School1
+  peer0.school2.edu.cn:
+    container_name: peer0.school2.edu.cn
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_PEER_ID=peer0.school2.edu.cn
+      - CORE_PEER_ADDRESS=peer0.school2.edu.cn:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.school2.edu.cn:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school2.edu.cn:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school2.edu.cn:7051
+      - CORE_PEER_LOCALMSPID=School2MSP
+      - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    volumes:
+        - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
+    ports:
+      - "7061:7051"
+      - "7063:7053"
+    networks:
+      - ssm
+
+  # 更多的Peer节点和CA服务可以按照类似的方式配置
+
+networks:
+  ssm:
