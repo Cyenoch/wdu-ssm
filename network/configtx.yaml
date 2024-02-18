@@ -126,15 +126,18 @@ Profiles:
       Organizations:
         - *EducationBoard
       Capabilities: *OrdererCapabilities
-    Application:
-      <<: *ApplicationDefaults
-      Organizations:
-        - *School1
-        - *School2
-      Capabilities: *ApplicationCapabilities
     Consortiums:
       EducationConsortium:
         Organizations:
           - *School1
           - *School2
+  TwoEducationChannel:
     Consortium: EducationConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *School1
+        - *School2
+      Capabilities:
+        <<: *ApplicationCapabilities
