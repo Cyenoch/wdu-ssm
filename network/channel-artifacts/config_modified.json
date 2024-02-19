@@ -125,6 +125,18 @@
               }
             },
             "values": {
+              "AnchorPeers": {
+                "mod_policy": "Admins",
+                "value": {
+                  "anchor_peers": [
+                    {
+                      "host": "peer0.school1.edu.cn",
+                      "port": 7051
+                    }
+                  ]
+                },
+                "version": "0"
+              },
               "MSP": {
                 "mod_policy": "Admins",
                 "value": {
@@ -169,21 +181,9 @@
                   "type": 0
                 },
                 "version": "0"
-              },
-              "AnchorPeers": {
-                "mod_policy": "Admins",
-                "value": {
-                  "anchor_peers": [
-                    {
-                      "host": "peer0.school1.edu.cn",
-                      "port": 7051
-                    }
-                  ]
-                },
-                "version": "0"
               }
             },
-            "version": "0"
+            "version": "1"
           },
           "School2MSP": {
             "groups": {},
@@ -307,18 +307,6 @@
               }
             },
             "values": {
-              "AnchorPeers": {
-                "mod_policy": "Admins",
-                "value": {
-                  "anchor_peers": [
-                    {
-                      "host": "peer0.school2.edu.cn",
-                      "port": 7061
-                    }
-                  ]
-                },
-                "version": "0"
-              },
               "MSP": {
                 "mod_policy": "Admins",
                 "value": {
@@ -363,9 +351,21 @@
                   "type": 0
                 },
                 "version": "0"
+              },
+              "AnchorPeers": {
+                "mod_policy": "Admins",
+                "value": {
+                  "anchor_peers": [
+                    {
+                      "host": "peer0.school2.edu.cn",
+                      "port": 7061
+                    }
+                  ]
+                },
+                "version": "0"
               }
             },
-            "version": "1"
+            "version": "0"
           }
         },
         "mod_policy": "Admins",
@@ -377,6 +377,28 @@
               "value": {
                 "rule": "MAJORITY",
                 "sub_policy": "Admins"
+              }
+            },
+            "version": "0"
+          },
+          "Endorsement": {
+            "mod_policy": "Admins",
+            "policy": {
+              "type": 3,
+              "value": {
+                "rule": "MAJORITY",
+                "sub_policy": "Endorsement"
+              }
+            },
+            "version": "0"
+          },
+          "LifecycleEndorsement": {
+            "mod_policy": "Admins",
+            "policy": {
+              "type": 3,
+              "value": {
+                "rule": "MAJORITY",
+                "sub_policy": "Endorsement"
               }
             },
             "version": "0"
@@ -646,7 +668,7 @@
                 "consenters": [
                   {
                     "client_tls_cert": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNZRENDQWdlZ0F3SUJBZ0lSQUpmemVBcm9NNFd1VDROYkVBMndmV0F3Q2dZSUtvWkl6ajBFQXdJd2JqRUwKTUFrR0ExVUVCaE1DVlZNeEV6QVJCZ05WQkFnVENrTmhiR2xtYjNKdWFXRXhGakFVQmdOVkJBY1REVk5oYmlCRwpjbUZ1WTJselkyOHhGVEFUQmdOVkJBb1RER0p2WVhKa0xtVmtkUzVqYmpFYk1Ca0dBMVVFQXhNU2RHeHpZMkV1ClltOWhjbVF1WldSMUxtTnVNQjRYRFRJME1ESXdOVEV3TkRNd01Gb1hEVE0wTURJd01qRXdORE13TUZvd1dqRUwKTUFrR0ExVUVCaE1DVlZNeEV6QVJCZ05WQkFnVENrTmhiR2xtYjNKdWFXRXhGakFVQmdOVkJBY1REVk5oYmlCRwpjbUZ1WTJselkyOHhIakFjQmdOVkJBTVRGVzl5WkdWeVpYSXdMbUp2WVhKa0xtVmtkUzVqYmpCWk1CTUdCeXFHClNNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJOYnBMN2RiYWhMc0ZmbDNTT2QxZTI5bklQQjBwZmJ2czgremRVdisKbHBJOVl6OGtOazFiK1BLZUlXaS8zOTNYTDRMVjNpbllteDhyTkx1RVMxcjl4bGlqZ1prd2daWXdEZ1lEVlIwUApBUUgvQkFRREFnV2dNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUZCUWNEQWpBTUJnTlZIUk1CCkFmOEVBakFBTUNzR0ExVWRJd1FrTUNLQUlESTN3ZGUwazVJZ0pZOGRMOXA1Y0x0N3FSM25uRnpuTmV1Ymh1MUcKOGZrTk1Db0dBMVVkRVFRak1DR0NGVzl5WkdWeVpYSXdMbUp2WVhKa0xtVmtkUzVqYm9JSWIzSmtaWEpsY2pBdwpDZ1lJS29aSXpqMEVBd0lEUndBd1JBSWdUaEZ5amNMNEFMWDE5OVJVRGFjMVYrb2FLZEdUR1piYmJBNEdWa1g4CmVETUNJR2krb0NWWXVja3J1V0g5VjRqM2QyZTM3Y0ZrV0cvTGlZVXJOYzk5REt5cgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
-                    "host": "orderer.board.edu.cn",
+                    "host": "orderer0.board.edu.cn",
                     "port": 7050,
                     "server_tls_cert": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNZRENDQWdlZ0F3SUJBZ0lSQUpmemVBcm9NNFd1VDROYkVBMndmV0F3Q2dZSUtvWkl6ajBFQXdJd2JqRUwKTUFrR0ExVUVCaE1DVlZNeEV6QVJCZ05WQkFnVENrTmhiR2xtYjNKdWFXRXhGakFVQmdOVkJBY1REVk5oYmlCRwpjbUZ1WTJselkyOHhGVEFUQmdOVkJBb1RER0p2WVhKa0xtVmtkUzVqYmpFYk1Ca0dBMVVFQXhNU2RHeHpZMkV1ClltOWhjbVF1WldSMUxtTnVNQjRYRFRJME1ESXdOVEV3TkRNd01Gb1hEVE0wTURJd01qRXdORE13TUZvd1dqRUwKTUFrR0ExVUVCaE1DVlZNeEV6QVJCZ05WQkFnVENrTmhiR2xtYjNKdWFXRXhGakFVQmdOVkJBY1REVk5oYmlCRwpjbUZ1WTJselkyOHhIakFjQmdOVkJBTVRGVzl5WkdWeVpYSXdMbUp2WVhKa0xtVmtkUzVqYmpCWk1CTUdCeXFHClNNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJOYnBMN2RiYWhMc0ZmbDNTT2QxZTI5bklQQjBwZmJ2czgremRVdisKbHBJOVl6OGtOazFiK1BLZUlXaS8zOTNYTDRMVjNpbllteDhyTkx1RVMxcjl4bGlqZ1prd2daWXdEZ1lEVlIwUApBUUgvQkFRREFnV2dNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUZCUWNEQWpBTUJnTlZIUk1CCkFmOEVBakFBTUNzR0ExVWRJd1FrTUNLQUlESTN3ZGUwazVJZ0pZOGRMOXA1Y0x0N3FSM25uRnpuTmV1Ymh1MUcKOGZrTk1Db0dBMVVkRVFRak1DR0NGVzl5WkdWeVpYSXdMbUp2WVhKa0xtVmtkUzVqYm9JSWIzSmtaWEpsY2pBdwpDZ1lJS29aSXpqMEVBd0lEUndBd1JBSWdUaEZ5amNMNEFMWDE5OVJVRGFjMVYrb2FLZEdUR1piYmJBNEdWa1g4CmVETUNJR2krb0NWWXVja3J1V0g5VjRqM2QyZTM3Y0ZrV0cvTGlZVXJOYzk5REt5cgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
                   }
@@ -739,7 +761,7 @@
         "mod_policy": "/Channel/Orderer/Admins",
         "value": {
           "addresses": [
-            "orderer.board.edu.cn:7050"
+            "orderer0.board.edu.cn:7050"
           ]
         },
         "version": "0"

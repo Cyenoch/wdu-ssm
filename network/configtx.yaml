@@ -62,6 +62,12 @@ Capabilities:
 Application: &ApplicationDefaults
   Organizations:
   Policies:
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
     Readers:
       Type: ImplicitMeta
       Rule: "ANY Readers"
@@ -78,12 +84,12 @@ Orderer: &OrdererDefaults
   OrdererType: etcdraft
   EtcdRaft:
     Consenters:
-      - Host: orderer.board.edu.cn
+      - Host: orderer0.board.edu.cn
         Port: 7050
         ClientTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
   Addresses:
-    - orderer.board.edu.cn:7050
+    - orderer0.board.edu.cn:7050
   BatchTimeout: 2s
   BatchSize:
     MaxMessageCount: 10
@@ -126,14 +132,21 @@ Profiles:
       Organizations:
         - *EducationBoard
       Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *School1
+        - *School2
+      Capabilities:
+        <<: *ApplicationCapabilities
     Consortiums:
       EducationConsortium:
         Organizations:
           - *School1
           - *School2
   TwoEducationChannel:
-    Consortium: EducationConsortium
     <<: *ChannelDefaults
+    Consortium: EducationConsortium
     Application:
       <<: *ApplicationDefaults
       Organizations:

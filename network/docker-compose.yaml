@@ -2,8 +2,8 @@ version: '2'
 
 services:
   # Orderer服务
-  orderer.board.edu.cn:
-    container_name: orderer.board.edu.cn
+  orderer0.board.edu.cn:
+    container_name: orderer0.board.edu.cn
     image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=info
@@ -26,6 +26,7 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
         - ./system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/msp:/var/hyperledger/orderer/msp
         - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls:/var/hyperledger/orderer/tls
@@ -56,6 +57,7 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
         - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/msp:/var/hyperledger/peer/msp
         - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
     ports:
@@ -85,6 +87,7 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
         - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/msp:/var/hyperledger/peer/msp
         - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
     ports:

@@ -20,6 +20,9 @@ export CORE_PEER_ADDRESS=peer0.school1.edu.cn:7051
 # 切换配置文件
 source set_edu1.sh
 
+# orderer节点目录
+export ORDERER_0=${PWD}/crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn
+
 # 配置hosts文件
 echo "127.0.0.1  peer0.school1.edu.cn \
 127.0.0.1  peer0.school2.edu.cn \
@@ -55,7 +58,6 @@ osnadmin channel list -o orderer0.board.edu.cn:7053 --ca-file "${ORDERER_0}/msp/
 orderer节点加入channel
 ```bash
 # 默认加入了system-channel 所以不需要这个操作
-export ORDERER_0=${PWD}/crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn
 osnadmin channel join --channelID system-channel --config-block ./system-genesis-block/genesis.block -o orderer0.board.edu.cn:7053 --ca-file "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --client-cert "${ORDERER_0}/tls/server.crt" --client-key "${ORDERER_0}/tls/server.key"
 ```
 
@@ -125,4 +127,38 @@ configtxlator proto_encode --input config_update_in_envelope.json --type common.
 peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
 
 cd ..
+```
+
+部署链码
+```bash
+source set_edu1.sh
+
+# 打包链码
+peer lifecycle chaincode package chaincode/student-manager.tar.gz --path chaincode/student-manager/ --lang node --label student-manager_1.1
+
+# 安装
+peer lifecycle chaincode install chaincode/student-manager.tar.gz
+
+# 查看以安装的链码 输出没有顺序可言!
+peer lifecycle chaincode queryinstalled
+
+# 批准
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name student-manager --version 1.1 --package-id student-manager_1.1:81d6e494b310ec9d501052f50ee0d6003d3a51f8b07e60b8313547901dbaa528 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+
+# 查看通道成员是否批准了
+peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name student-manager --version 1.1 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --output json
+
+# 提交到通道
+peer lifecycle chaincode commit --channelID two-edu-channel --name student-manager --version 1.1 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${PWD}/crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${PWD}/crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt 
+
+# 查询提交
+peer lifecycle chaincode querycommitted --channelID two-edu-channel --name student-manager --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+
+# 尝试调用链码
+peer chaincode invoke -C two-edu-channel -n student-manager --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles "${PWD}/crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}' --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn 
+
+# 尝试查看数据
+peer chaincode query -C two-edu-channel -n student-manager -c '{"Args":["queryStudentRecord", "2022020121132"]}'
+
+
 ```
