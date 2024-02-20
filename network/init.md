@@ -1,3 +1,5 @@
+运行 startup.sh
+
 
 要设置的:
 ```bash
@@ -131,34 +133,35 @@ cd ..
 
 部署链码
 ```bash
+echo "installing chaincode..."
+
 source set_edu1.sh
 
-# 打包链码
-peer lifecycle chaincode package chaincode/student-manager.tar.gz --path chaincode/student-manager/ --lang node --label student-manager_1.1
+peer lifecycle chaincode package ./sm.tar.gz --path ./chaincode/sm --label sm_1.0
 
-# 安装
-peer lifecycle chaincode install chaincode/student-manager.tar.gz
+peer lifecycle chaincode install ./sm.tar.gz
+source set_edu2.sh
+peer lifecycle chaincode install ./sm.tar.gz
+source set_edu1.sh
 
-# 查看以安装的链码 输出没有顺序可言!
 peer lifecycle chaincode queryinstalled
 
-# 批准
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name student-manager --version 1.1 --package-id student-manager_1.1:81d6e494b310ec9d501052f50ee0d6003d3a51f8b07e60b8313547901dbaa528 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+export CC_ID="sm_1.0:07f8cc90f1717185f7bd54c027ededa10f3bcf66a6def65ac0f25c11d15c9abc"
 
-# 查看通道成员是否批准了
-peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name student-manager --version 1.1 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --output json
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+source set_edu2.sh
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+source set_edu1.sh
 
-# 提交到通道
-peer lifecycle chaincode commit --channelID two-edu-channel --name student-manager --version 1.1 --sequence 1 --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${PWD}/crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${PWD}/crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt 
+peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --output json
 
-# 查询提交
-peer lifecycle chaincode querycommitted --channelID two-edu-channel --name student-manager --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} 
 
-# 尝试调用链码
-peer chaincode invoke -C two-edu-channel -n student-manager --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles "${PWD}/crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}' --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn 
+peer lifecycle chaincode querycommitted --channelID two-edu-channel --name sm --cafile ${ORDERER_CAFILE}
 
-# 尝试查看数据
-peer chaincode query -C two-edu-channel -n student-manager -c '{"Args":["queryStudentRecord", "2022020121132"]}'
+echo "calling init ledger..."
 
+peer chaincode invoke -C two-edu-channel -n sm --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles "${EDU1_CAFILE}" -c '{"function":"InitLedger","Args":[]}' --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
 
+echo "done."
 ```

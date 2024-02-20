@@ -386,7 +386,7 @@
             "policy": {
               "type": 3,
               "value": {
-                "rule": "MAJORITY",
+                "rule": "ANY",
                 "sub_policy": "Endorsement"
               }
             },
@@ -397,7 +397,7 @@
             "policy": {
               "type": 3,
               "value": {
-                "rule": "MAJORITY",
+                "rule": "ANY",
                 "sub_policy": "Endorsement"
               }
             },
