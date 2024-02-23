@@ -1,5 +1,5 @@
 // TODO:
-module github.com/cyenoch/ssm-fabric-smaples/network/chaincode/sm
+module github.com/Cyenoch/wdu-ssm/chaincode/sm
 
 go 1.21
 
