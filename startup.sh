@@ -1,6 +1,22 @@
 #!/bin/bash
 
-export PATH=${PWD}/../bin/:$PATH
+while getopts "de" opt; do
+  case $opt in
+    d)
+      echo "-d will remove docker-compose down -v";
+      docker-compose down -v;
+      exit;
+      ;;
+    e)
+      echo "-e echo something"
+      exit;
+      ;;
+    \?)
+      ;;
+  esac
+done
+
+export PATH=${PWD}/bin/:$PATH
 export PATH=${PWD}/scripts/:$PATH
 
 export FABRIC_CFG_PATH=${PWD}/
@@ -42,7 +58,7 @@ configtxlator proto_decode --input config_update.pb --type common.ConfigUpdate -
 echo '{"payload":{"header":{"channel_header":{"channel_id":"two-edu-channel", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . > config_update_in_envelope.json
 configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope --output config_update_in_envelope.pb
 peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile ${ORDERER_CAFILE}
-cd ..
+cd -
 
 source set_edu2.sh
 peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile ${ORDERER_CAFILE}
@@ -57,7 +73,7 @@ configtxlator proto_decode --input config_update.pb --type common.ConfigUpdate -
 echo '{"payload":{"header":{"channel_header":{"channel_id":"two-edu-channel", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . > config_update_in_envelope.json
 configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope --output config_update_in_envelope.pb
 peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile ${ORDERER_CAFILE}
-cd ..
+cd -
 
 echo "installing chaincode..."
 
@@ -73,7 +89,8 @@ source set_edu1.sh
 
 peer lifecycle chaincode queryinstalled
 
-export CC_ID="sm_1.0:07f8cc90f1717185f7bd54c027ededa10f3bcf66a6def65ac0f25c11d15c9abc"
+# Change to actual value
+export CC_ID=$(peer lifecycle chaincode queryinstalled | awk -F'Package ID:' '{print $2}' | awk -F',' '{gsub(/^ *| *$/,""); print $1}' | grep ':')
 
 peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
 source set_edu2.sh
@@ -89,7 +106,11 @@ peer lifecycle chaincode querycommitted --channelID two-edu-channel --name sm --
 echo "calling init ledger..."
 peer chaincode invoke -C two-edu-channel -n sm -c '{"function":"InitLedger","Args":[]}' --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
 
+sleep 1
+
 echo "querying students..."
 peer chaincode query -C two-edu-channel -n sm -c '{"Args":["GetStudents"]}'
+
+sleep 1
 
 echo "done."

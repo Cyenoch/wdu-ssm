@@ -30,6 +30,7 @@ services:
         - ./system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/msp:/var/hyperledger/orderer/msp
         - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls:/var/hyperledger/orderer/tls
+        - orderer0_data:/var/hyperledger/production/orderer
     ports:
       - "7050:7050"
       - "7053:7053"
@@ -60,6 +61,7 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/msp:/var/hyperledger/peer/msp
         - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
+        - peer0_school1_data:/var/hyperledger/production
     ports:
       - "7051:7051"
       - "7052:7052"
@@ -90,6 +92,7 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/msp:/var/hyperledger/peer/msp
         - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
+        - peer0_school2_data:/var/hyperledger/production
     ports:
       - "7061:7061"
       - "7062:7062"
@@ -97,6 +100,11 @@ services:
       - ssm
 
   # 更多的Peer节点和CA服务可以按照类似的方式配置
+
+volumes:
+  orderer0_data:
+  peer0_school2_data:
+  peer0_school1_data:
 
 networks:
   ssm:

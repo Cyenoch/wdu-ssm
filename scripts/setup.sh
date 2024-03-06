@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd ..
-export PATH=${PWD}/../bin/:$PATH
+export PATH=${PWD}/bin/:$PATH
 export PATH=${PWD}/scripts/:$PATH
 export FABRIC_CFG_PATH=${PWD}/
 
