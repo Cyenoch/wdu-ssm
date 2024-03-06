@@ -1,0 +1,23 @@
+[
+  {
+      "name": "School1Students",
+      "policy": "OR('School1MSP.member', 'EducationBureauMSP.member')",
+      "requiredPeerCount": 0,
+      "maxPeerCount": 2,
+      "blockToLive":1000000,
+      "memberOnlyRead": true
+  },
+
+  {
+    "name": "School1Administrator"
+  },
+
+  {
+      "name": "School2Students",
+      "policy": "OR('School2MSP.member', 'EducationBureauMSP.member')",
+      "requiredPeerCount": 0,
+      "maxPeerCount": 2,
+      "blockToLive":1000000,
+      "memberOnlyRead": true
+  }
+]

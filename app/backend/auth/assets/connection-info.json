@@ -1,0 +1,9 @@
+{
+  "certificateAuthorities": {
+    "ca.bureau.edu.cn": {
+      "url": "https://ca.bureau.edu.cn:7054",
+      "pem": "crypto-config/peerOrganizations/bureau.edu.cn/ca/ca-cert.pem",
+      "caName": "ca-educationbureau"
+    }
+  }
+}

@@ -37,7 +37,10 @@ while getopts "deih" opt; do
       echo -e "127.0.0.1  peer0.school1.edu.cn \n\
 127.0.0.1  peer0.school2.edu.cn \n\
 127.0.0.1  orderer0.edu.cn \n\
-127.0.0.1  peer0.bureau.edu.cn" | sudo tee -a /etc/hosts;
+127.0.0.1  peer0.bureau.edu.cn \n\
+127.0.0.1  ca.bureau.edu.cn \n\
+127.0.0.1  ca.school1.edu.cn \n\
+127.0.0.1  ca.school2.edu.cn" | sudo tee -a /etc/hosts;
       exit;
       ;;
     \?)
@@ -68,7 +71,7 @@ peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --
 cd channel-artifacts
 configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
 jq '.data.data[0].payload.data.config' config_block.json > config.json
-jq '.channel_group.groups.Application.groups.EducationBureauMSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.bureau.edu.cn","port": 7071}]},"version": "0"}}' config.json > config_modified.json
+jq '.channel_group.groups.Application.groups.EducationBureauMSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.bureau.edu.cn","port": 7051}]},"version": "0"}}' config.json > config_modified.json
 configtxlator proto_encode --input config.json --type common.Config --output config.pb
 configtxlator proto_encode --input config_modified.json --type common.Config --output config_modified.pb
 configtxlator compute_update --channel_id two-edu-channel --original config.pb --updated config_modified.pb --output config_update.pb
@@ -83,7 +86,7 @@ peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --
 cd channel-artifacts
 configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
 jq '.data.data[0].payload.data.config' config_block.json > config.json
-jq '.channel_group.groups.Application.groups.School1MSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.school1.edu.cn","port": 7051}]},"version": "0"}}' config.json > config_modified.json
+jq '.channel_group.groups.Application.groups.School1MSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.school1.edu.cn","port": 7061}]},"version": "0"}}' config.json > config_modified.json
 configtxlator proto_encode --input config.json --type common.Config --output config.pb
 configtxlator proto_encode --input config_modified.json --type common.Config --output config_modified.pb
 configtxlator compute_update --channel_id two-edu-channel --original config.pb --updated config_modified.pb --output config_update.pb
@@ -98,7 +101,7 @@ peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --
 cd channel-artifacts
 configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
 jq '.data.data[0].payload.data.config' config_block.json > config.json
-jq '.channel_group.groups.Application.groups.School2MSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.school2.edu.cn","port": 7061}]},"version": "0"}}' config.json > config_modified.json
+jq '.channel_group.groups.Application.groups.School2MSP.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "peer0.school2.edu.cn","port": 7071}]},"version": "0"}}' config.json > config_modified.json
 configtxlator proto_encode --input config.json --type common.Config --output config.pb
 configtxlator proto_encode --input config_modified.json --type common.Config --output config_modified.pb
 configtxlator compute_update --channel_id two-edu-channel --original config.pb --updated config_modified.pb --output config_update.pb
@@ -136,11 +139,11 @@ peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm -
 
 source set_bureau.sh
 peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --output json
-peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn --peerAddresses peer0.bureau.edu.cn:7071 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} 
+peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn --peerAddresses peer0.bureau.edu.cn:7051 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7061 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7071 --tlsRootCertFiles ${EDU2_CAFILE} 
 peer lifecycle chaincode querycommitted --channelID two-edu-channel --name sm --cafile ${ORDERER_CAFILE}
 
 echo "calling init ledger..."
-peer chaincode invoke -C two-edu-channel -n sm -c '{"function":"InitLedger","Args":[]}' --peerAddresses peer0.bureau.edu.cn:7071 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
+peer chaincode invoke -C two-edu-channel -n sm -c '{"function":"InitLedger","Args":[]}' --peerAddresses peer0.bureau.edu.cn:7051 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7061 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7071 --tlsRootCertFiles ${EDU2_CAFILE} --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
 
 sleep 2
 

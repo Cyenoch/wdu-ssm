@@ -16,6 +16,8 @@ type Student struct {
 	ID     string `json:"ID"`
 	Name   string `json:"Name"`
 	School string `json:"School"`
+	Grade  string `json:"Grade"`
+	Major  string `json:"Major"`
 }
 
 func main() {

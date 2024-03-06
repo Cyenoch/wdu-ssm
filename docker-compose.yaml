@@ -43,12 +43,12 @@ services:
     image: hyperledger/fabric-peer:latest
     environment:
       - CORE_PEER_ID=peer0.bureau.edu.cn
-      - CORE_PEER_ADDRESS=peer0.bureau.edu.cn:7071
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7071
-      - CORE_PEER_CHAINCODEADDRESS=peer0.bureau.edu.cn:7072
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7072
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bureau.edu.cn:7071
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bureau.edu.cn:7071
+      - CORE_PEER_ADDRESS=peer0.bureau.edu.cn:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.bureau.edu.cn:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bureau.edu.cn:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bureau.edu.cn:7051
       - CORE_PEER_LOCALMSPID=EducationBureauMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
       - CORE_PEER_TLS_ENABLED=true
@@ -63,8 +63,8 @@ services:
         - ./crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_bureau_data:/var/hyperledger/production
     ports:
-      - "7071:7071"
-      - "7072:7072"
+      - "7051:7051"
+      - "7052:7052"
     networks:
       - ssm
 
@@ -74,12 +74,12 @@ services:
     image: hyperledger/fabric-peer:latest
     environment:
       - CORE_PEER_ID=peer0.school1.edu.cn
-      - CORE_PEER_ADDRESS=peer0.school1.edu.cn:7051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
-      - CORE_PEER_CHAINCODEADDRESS=peer0.school1.edu.cn:7052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school1.edu.cn:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school1.edu.cn:7051
+      - CORE_PEER_ADDRESS=peer0.school1.edu.cn:7061
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7061
+      - CORE_PEER_CHAINCODEADDRESS=peer0.school1.edu.cn:7062
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7062
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school1.edu.cn:7061
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school1.edu.cn:7061
       - CORE_PEER_LOCALMSPID=School1MSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
       - CORE_PEER_TLS_ENABLED=true
@@ -94,8 +94,8 @@ services:
         - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_school1_data:/var/hyperledger/production
     ports:
-      - "7051:7051"
-      - "7052:7052"
+      - "7061:7061"
+      - "7062:7062"
     networks:
       - ssm
 
@@ -105,12 +105,12 @@ services:
     image: hyperledger/fabric-peer:latest
     environment:
       - CORE_PEER_ID=peer0.school2.edu.cn
-      - CORE_PEER_ADDRESS=peer0.school2.edu.cn:7061
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7061
-      - CORE_PEER_CHAINCODEADDRESS=peer0.school2.edu.cn:7062
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7062
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school2.edu.cn:7061
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school2.edu.cn:7061
+      - CORE_PEER_ADDRESS=peer0.school2.edu.cn:7071
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7071
+      - CORE_PEER_CHAINCODEADDRESS=peer0.school2.edu.cn:7072
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7072
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.school2.edu.cn:7071
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.school2.edu.cn:7071
       - CORE_PEER_LOCALMSPID=School2MSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
       - CORE_PEER_TLS_ENABLED=true
@@ -125,12 +125,64 @@ services:
         - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_school2_data:/var/hyperledger/production
     ports:
-      - "7061:7061"
-      - "7062:7062"
+      - "7071:7071"
+      - "7072:7072"
     networks:
       - ssm
 
   # 更多的Peer节点和CA服务可以按照类似的方式配置
+
+
+  # 教育局的CA服务
+  ca.bureau.edu.cn:
+    container_name: ca.bureau.edu.cn
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-educationbureau
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=7054
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/bureau.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
+    networks:
+      - ssm
+
+  # School1的CA服务
+  ca.school1.edu.cn:
+    container_name: ca.school1.edu.cn
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-school1
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=7064
+    ports:
+      - "7064:7064"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/school1.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
+    networks:
+      - ssm
+
+  # School2的CA服务
+  ca.school2.edu.cn:
+    container_name: ca.school2.edu.cn
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-school2
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=7074
+    ports:
+      - "7074:7074"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/school2.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
+    networks:
+      - ssm
 
 volumes:
   orderer0_data:

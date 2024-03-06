@@ -34,3 +34,10 @@ install-fabric.sh
 network/sm.tar.gz
 
 chaincode/sm/sm
+
+crypto-config/peerOrganizations/*/ca/msp
+crypto-config/peerOrganizations/*/ca/*.db
+crypto-config/peerOrganizations/*/ca/ca-cert.pem
+crypto-config/peerOrganizations/*/ca/IssuerPublicKey
+crypto-config/peerOrganizations/*/ca/IssuerRevocationPublicKey
+crypto-config/peerOrganizations/*/ca/tls-cert.pem

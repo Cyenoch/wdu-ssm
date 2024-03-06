@@ -96,7 +96,7 @@
                         "anchor_peers": [
                           {
                             "host": "peer0.school2.edu.cn",
-                            "port": 7061
+                            "port": 7071
                           }
                         ]
                       },
