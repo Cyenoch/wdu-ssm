@@ -15,10 +15,18 @@ PeerOrgs:
       Count: 1
     Users:
       Count: 1
+  - &EducationBureau
+    Name: EducationBureauMSP
+    Domain: bureau.edu.cn
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
 OrdererOrgs:
-  - &EducationBoard
-    Name: EducationBoardMSP
-    Domain: board.edu.cn
+  - &EduOrderer
+    Name: EduOrdererMSP
+    Domain: edu.cn
     EnableNodeOUs: true
     Template:
       Count: 1

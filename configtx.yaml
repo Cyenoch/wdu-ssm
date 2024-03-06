@@ -35,21 +35,42 @@ Organizations:
       Endorsement:
         Type: Signature
         Rule: "OR('School2MSP.peer')"
-
-  - &EducationBoard # 定义教育局作为Orderer组织
-    Name: EducationBoardOrdererMSP
-    ID: EducationBoardOrdererMSP
-    MSPDir: crypto-config/ordererOrganizations/board.edu.cn/msp
+  
+  - &EducationBureau # 定义学校2作为Peer组织
+    Name: EducationBureauMSP
+    ID: EducationBureauMSP
+    MSPDir: crypto-config/peerOrganizations/bureau.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('EducationBoardOrdererMSP.member')"
+        Rule: "OR('EducationBureauMSP.member')"
       Writers:
         Type: Signature
-        Rule: "OR('EducationBoardOrdererMSP.member')"
+        Rule: "OR('EducationBureauMSP.member')"
       Admins:
         Type: Signature
-        Rule: "OR('EducationBoardOrdererMSP.admin')"
+        Rule: "OR('EducationBureauMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('EducationBureauMSP.peer')"
+
+  - &EduOrderer # 定义教育局作为Orderer组织
+    Name: EduOrdererMSP
+    ID: EduOrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/edu.cn/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('EduOrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('EduOrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('EduOrdererMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('EduOrdererMSP.peer')"
 
 Capabilities:
   Channel: &ChannelCapabilities
@@ -84,12 +105,12 @@ Orderer: &OrdererDefaults
   OrdererType: etcdraft
   EtcdRaft:
     Consenters:
-      - Host: orderer0.board.edu.cn
+      - Host: orderer0.edu.cn
         Port: 7050
-        ClientTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
-        ServerTLSCert: crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls/server.crt
+        ClientTLSCert: crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
+        ServerTLSCert: crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
   Addresses:
-    - orderer0.board.edu.cn:7050
+    - orderer0.edu.cn:7050
   BatchTimeout: 2s
   BatchSize:
     MaxMessageCount: 10
@@ -130,13 +151,14 @@ Profiles:
     Orderer:
       <<: *OrdererDefaults
       Organizations:
-        - *EducationBoard
+        - *EduOrderer
       Capabilities: *OrdererCapabilities
     Application:
       <<: *ApplicationDefaults
       Organizations:
         - *School1
         - *School2
+        - *EducationBureau
       Capabilities:
         <<: *ApplicationCapabilities
     Consortiums:
@@ -144,6 +166,7 @@ Profiles:
         Organizations:
           - *School1
           - *School2
+          - *EducationBureau
   TwoEducationChannel:
     <<: *ChannelDefaults
     Consortium: EducationConsortium
@@ -152,5 +175,6 @@ Profiles:
       Organizations:
         - *School1
         - *School2
+        - *EducationBureau
       Capabilities:
         <<: *ApplicationCapabilities

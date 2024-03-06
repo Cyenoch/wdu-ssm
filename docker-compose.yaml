@@ -2,15 +2,15 @@ version: '2'
 
 services:
   # Orderer服务
-  orderer0.board.edu.cn:
-    container_name: orderer0.board.edu.cn
+  orderer0.edu.cn:
+    container_name: orderer0.edu.cn
     image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
       - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
-      - ORDERER_GENERAL_LOCALMSPID=EducationBoardOrdererMSP
+      - ORDERER_GENERAL_LOCALMSPID=EduOrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       - ORDERER_GENERAL_TLS_ENABLED=true
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
@@ -28,12 +28,43 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-        - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/msp:/var/hyperledger/orderer/msp
-        - ./crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn/tls:/var/hyperledger/orderer/tls
+        - ./crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls:/var/hyperledger/orderer/tls
         - orderer0_data:/var/hyperledger/production/orderer
     ports:
       - "7050:7050"
       - "7053:7053"
+    networks:
+      - ssm
+
+# Peer0 of School1
+  peer0.bureau.edu.cn:
+    container_name: peer0.bureau.edu.cn
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_PEER_ID=peer0.bureau.edu.cn
+      - CORE_PEER_ADDRESS=peer0.bureau.edu.cn:7071
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7071
+      - CORE_PEER_CHAINCODEADDRESS=peer0.bureau.edu.cn:7072
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7072
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bureau.edu.cn:7071
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bureau.edu.cn:7071
+      - CORE_PEER_LOCALMSPID=EducationBureauMSP
+      - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/peer/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls:/var/hyperledger/peer/tls
+        - peer0_bureau_data:/var/hyperledger/production
+    ports:
+      - "7071:7071"
+      - "7072:7072"
     networks:
       - ssm
 
@@ -103,6 +134,7 @@ services:
 
 volumes:
   orderer0_data:
+  peer0_bureau_data:
   peer0_school2_data:
   peer0_school1_data:
 

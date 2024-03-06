@@ -23,12 +23,13 @@ export CORE_PEER_ADDRESS=peer0.school1.edu.cn:7051
 source set_edu1.sh
 
 # orderer节点目录
-export ORDERER_0=${PWD}/crypto-config/ordererOrganizations/board.edu.cn/orderers/orderer0.board.edu.cn
+export ORDERER_0=${PWD}/crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn
 
 # 配置hosts文件
-echo "127.0.0.1  peer0.school1.edu.cn \
-127.0.0.1  peer0.school2.edu.cn \
-127.0.0.1  orderer0.board.edu.cn" | sudo tee -a /etc/hosts
+echo -e "127.0.0.1  peer0.school1.edu.cn \n\
+127.0.0.1  peer0.school2.edu.cn \n\
+127.0.0.1  orderer0.edu.cn \n\
+127.0.0.1  peer0.bureau.edu.cn" | sudo tee -a /etc/hosts;
 
 ```
 
@@ -54,19 +55,19 @@ docker-compose up -d
 
 查看orderer节点加入的通道
 ```bash
-osnadmin channel list -o orderer0.board.edu.cn:7053 --ca-file "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --client-cert "${ORDERER_0}/tls/server.crt" --client-key "${ORDERER_0}/tls/server.key"
+osnadmin channel list -o orderer0.edu.cn:7053 --ca-file "${ORDERER_0}/msp/tlscacerts/tlsca.edu.cn-cert.pem" --client-cert "${ORDERER_0}/tls/server.crt" --client-key "${ORDERER_0}/tls/server.key"
 ```
 
 orderer节点加入channel
 ```bash
 # 默认加入了system-channel 所以不需要这个操作
-osnadmin channel join --channelID system-channel --config-block ./system-genesis-block/genesis.block -o orderer0.board.edu.cn:7053 --ca-file "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem" --client-cert "${ORDERER_0}/tls/server.crt" --client-key "${ORDERER_0}/tls/server.key"
+osnadmin channel join --channelID system-channel --config-block ./system-genesis-block/genesis.block -o orderer0.bureau.edu.cn:7053 --ca-file "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem" --client-cert "${ORDERER_0}/tls/server.crt" --client-key "${ORDERER_0}/tls/server.key"
 ```
 
 创建channel 学校与学校间可以通信
 ```bash
 source set_edu1.sh
-peer channel create -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel -f ./channel-artifacts/two-edu-channel.tx --outputBlock ./channel-artifacts/two-edu-channel.block --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer channel create -o localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn -c two-edu-channel -f ./channel-artifacts/two-edu-channel.tx --outputBlock ./channel-artifacts/two-edu-channel.block --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem"
 ```
 
 俩学校节点加入channel
@@ -81,7 +82,7 @@ peer channel join -b ./channel-artifacts/two-edu-channel.block
 导出edu1通道配置
 ```bash
 source set_edu1.sh
-peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem"
 
 cd channel-artifacts
 
@@ -100,7 +101,7 @@ echo '{"payload":{"header":{"channel_header":{"channel_id":"two-edu-channel", "t
 
 configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope --output config_update_in_envelope.pb
 
-peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem"
 
 cd ..
 ```
@@ -108,7 +109,7 @@ cd ..
 配置edu2通道
 ```bash
 source set_edu2.sh
-peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer channel fetch config channel-artifacts/config_block.pb -o localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem"
 
 cd channel-artifacts
 
@@ -126,7 +127,7 @@ echo '{"payload":{"header":{"channel_header":{"channel_id":"two-edu-channel", "t
 
 configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope --output config_update_in_envelope.pb
 
-peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.board.edu.cn-cert.pem"
+peer channel update -f config_update_in_envelope.pb -c two-edu-channel -o localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn -c two-edu-channel --tls --cafile "${ORDERER_0}/msp/tlscacerts/tlsca.bureau.edu.cn-cert.pem"
 
 cd ..
 ```
@@ -148,20 +149,20 @@ peer lifecycle chaincode queryinstalled
 
 export CC_ID="sm_1.0:07f8cc90f1717185f7bd54c027ededa10f3bcf66a6def65ac0f25c11d15c9abc"
 
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn
 source set_edu2.sh
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn
 source set_edu1.sh
 
 peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --output json
 
-peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} 
+peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7061 --tlsRootCertFiles ${EDU2_CAFILE} 
 
 peer lifecycle chaincode querycommitted --channelID two-edu-channel --name sm --cafile ${ORDERER_CAFILE}
 
 echo "calling init ledger..."
 
-peer chaincode invoke -C two-edu-channel -n sm --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles "${EDU1_CAFILE}" -c '{"function":"InitLedger","Args":[]}' --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.board.edu.cn
+peer chaincode invoke -C two-edu-channel -n sm --peerAddresses peer0.school1.edu.cn:7051 --tlsRootCertFiles "${EDU1_CAFILE}" -c '{"function":"InitLedger","Args":[]}' --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.bureau.edu.cn
 
 echo "done."
 ```
