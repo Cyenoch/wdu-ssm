@@ -242,13 +242,13 @@ ldap:
 # which are always stored in lower case.
 #############################################################################
 affiliations:
-  school1:
-    admin:
-    teachers:
-    students:
-      y2024:
-      graduated:
-      alumni:
+  school2:
+    - admin
+    - teachers
+  school2.students:
+    - y2024
+    - graduated
+    - alumni
 
 #############################################################################
 #  Signing section
