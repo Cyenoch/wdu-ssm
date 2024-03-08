@@ -1,0 +1,15 @@
+{
+  "name": "ssm-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "api:dev": "cd packages/rest-api && bun run dev"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.8.0",
+    "eslint": "^8.57.0"
+  }
+}
