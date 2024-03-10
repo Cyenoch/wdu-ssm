@@ -24,8 +24,26 @@ while getopts "deih" opt; do
       exit;
       ;;
     d)
-      echo "-d will remove docker-compose down -v";
+      echo "-d will remove docker-compose down -v and reset ca";
       docker-compose down -v;
+      sudo rm -rf crypto-config/peerOrganizations/bureau.edu.cn/ca/msp
+      sudo rm -rf crypto-config/peerOrganizations/school1.edu.cn/ca/msp
+      sudo rm -rf crypto-config/peerOrganizations/school2.edu.cn/ca/msp
+      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/ca-cert.pem
+      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/fabric-ca-server.db
+      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/IssuerPublicKey
+      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/IssuerRevocationPublicKey
+      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/tls-cert.pem
+      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/ca-cert.pem
+      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/fabric-ca-server.db
+      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/IssuerPublicKey
+      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/IssuerRevocationPublicKey
+      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/tls-cert.pem
+      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/ca-cert.pem
+      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/fabric-ca-server.db
+      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/IssuerPublicKey
+      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/IssuerRevocationPublicKey
+      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/tls-cert.pem
       exit;
       ;;
     e)

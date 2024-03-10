@@ -131,7 +131,7 @@ registry:
     - name: admin
       pass: adminpw
       type: client
-      affiliation: ""
+      affiliation: "unit.admin"
       attrs:
         hf.Registrar.Roles: "*"
         hf.Registrar.DelegateRoles: "*"
@@ -242,11 +242,10 @@ ldap:
 # which are always stored in lower case.
 #############################################################################
 affiliations:
-  school2:
+  unit:
     - admin
     - teachers
-  school2.students:
-    - y2024
+    - students
     - graduated
     - alumni
 

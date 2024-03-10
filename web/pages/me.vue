@@ -21,6 +21,10 @@ watch(user, (user) => {
         <Button @click="supa.auth.signOut()">
           注销
         </Button>
+
+        <Button v-identity-guard="{ affiliation: 'unit.admin' }">
+          管理档案
+        </Button>
       </div>
     </div>
   </div>
