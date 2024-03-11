@@ -28,8 +28,8 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-        - ./crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/msp:/var/hyperledger/orderer/msp
-        - ./crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls:/var/hyperledger/orderer/tls
+        - ./orderer/edu.cn/orderers/orderer0.edu.cn/msp:/var/hyperledger/orderer/msp
+        - ./orderer/edu.cn/orderers/orderer0.edu.cn/tls:/var/hyperledger/orderer/tls
         - orderer0_data:/var/hyperledger/production/orderer
     ports:
       - "7050:7050"
@@ -59,8 +59,8 @@ services:
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ./crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/msp:/var/hyperledger/peer/msp
-        - ./crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls:/var/hyperledger/peer/tls
+        - ./peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_bureau_data:/var/hyperledger/production
     ports:
       - "7051:7051"
@@ -90,8 +90,8 @@ services:
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/msp:/var/hyperledger/peer/msp
-        - ./crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
+        - ./peer/school1.edu.cn/peers/peer0.school1.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./peer/school1.edu.cn/peers/peer0.school1.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_school1_data:/var/hyperledger/production
     ports:
       - "7061:7061"
@@ -121,8 +121,8 @@ services:
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/msp:/var/hyperledger/peer/msp
-        - ./crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
+        - ./peer/school2.edu.cn/peers/peer0.school2.edu.cn/msp:/var/hyperledger/peer/msp
+        - ./peer/school2.edu.cn/peers/peer0.school2.edu.cn/tls:/var/hyperledger/peer/tls
         - peer0_school2_data:/var/hyperledger/production
     ports:
       - "7071:7071"
@@ -146,7 +146,7 @@ services:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/bureau.edu.cn/ca/:/etc/hyperledger/fabric-ca
+      - ./peer/bureau.edu.cn/ca/:/etc/hyperledger/fabric-ca
     networks:
       - ssm
 
@@ -163,7 +163,7 @@ services:
       - "7064:7064"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/school1.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
+      - ./peer/school1.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
     networks:
       - ssm
 
@@ -180,7 +180,7 @@ services:
       - "7074:7074"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/school2.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
+      - ./peer/school2.edu.cn/ca/:/etc/hyperledger/fabric-ca-server
     networks:
       - ssm
 

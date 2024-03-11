@@ -3,7 +3,7 @@ Organizations:
   - &School1 # 定义学校1作为Peer组织
     Name: School1MSP
     ID: School1MSP
-    MSPDir: crypto-config/peerOrganizations/school1.edu.cn/msp
+    MSPDir: peer/school1.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
@@ -21,7 +21,7 @@ Organizations:
   - &School2 # 定义学校2作为Peer组织
     Name: School2MSP
     ID: School2MSP
-    MSPDir: crypto-config/peerOrganizations/school2.edu.cn/msp
+    MSPDir: peer/school2.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
@@ -39,7 +39,7 @@ Organizations:
   - &EducationBureau # 定义学校2作为Peer组织
     Name: EducationBureauMSP
     ID: EducationBureauMSP
-    MSPDir: crypto-config/peerOrganizations/bureau.edu.cn/msp
+    MSPDir: peer/bureau.edu.cn/msp
     Policies:
       Readers:
         Type: Signature
@@ -57,7 +57,7 @@ Organizations:
   - &EduOrderer # 定义教育局作为Orderer组织
     Name: EduOrdererMSP
     ID: EduOrdererMSP
-    MSPDir: crypto-config/ordererOrganizations/edu.cn/msp
+    MSPDir: orderer/edu.cn/msp
     Policies:
       Readers:
         Type: Signature
@@ -107,8 +107,8 @@ Orderer: &OrdererDefaults
     Consenters:
       - Host: orderer0.edu.cn
         Port: 7050
-        ClientTLSCert: crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
-        ServerTLSCert: crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
+        ClientTLSCert: orderer/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
+        ServerTLSCert: orderer/edu.cn/orderers/orderer0.edu.cn/tls/server.crt
   Addresses:
     - orderer0.edu.cn:7050
   BatchTimeout: 2s

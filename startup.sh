@@ -7,11 +7,11 @@ export FABRIC_CFG_PATH=${PWD}/
 
 source set_bureau.sh
 
-export ORDERER_0=${PWD}/crypto-config/ordererOrganizations/edu.cn/orderers/orderer0.edu.cn
+export ORDERER_0=${PWD}/orderer/edu.cn/orderers/orderer0.edu.cn
 export ORDERER_CAFILE=${ORDERER_0}/msp/tlscacerts/tlsca.edu.cn-cert.pem
-export EDU1_CAFILE=${PWD}/crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt
-export EDU2_CAFILE=${PWD}/crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt
-export BUREAU_CAFILE=${PWD}/crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt
+export EDU1_CAFILE=${PWD}/peer/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt
+export EDU2_CAFILE=${PWD}/peer/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt
+export BUREAU_CAFILE=${PWD}/peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt
 
 
 while getopts "deih" opt; do
@@ -26,24 +26,24 @@ while getopts "deih" opt; do
     d)
       echo "-d will remove docker-compose down -v and reset ca";
       docker-compose down -v;
-      sudo rm -rf crypto-config/peerOrganizations/bureau.edu.cn/ca/msp
-      sudo rm -rf crypto-config/peerOrganizations/school1.edu.cn/ca/msp
-      sudo rm -rf crypto-config/peerOrganizations/school2.edu.cn/ca/msp
-      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/ca-cert.pem
-      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/fabric-ca-server.db
-      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/IssuerPublicKey
-      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/IssuerRevocationPublicKey
-      rm -f crypto-config/peerOrganizations/bureau.edu.cn/ca/tls-cert.pem
-      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/ca-cert.pem
-      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/fabric-ca-server.db
-      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/IssuerPublicKey
-      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/IssuerRevocationPublicKey
-      rm -f crypto-config/peerOrganizations/school1.edu.cn/ca/tls-cert.pem
-      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/ca-cert.pem
-      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/fabric-ca-server.db
-      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/IssuerPublicKey
-      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/IssuerRevocationPublicKey
-      rm -f crypto-config/peerOrganizations/school2.edu.cn/ca/tls-cert.pem
+      sudo rm -rf peer/bureau.edu.cn/ca
+      sudo rm -rf peer/school1.edu.cn/ca
+      sudo rm -rf peer/school2.edu.cn/ca
+      # rm -f peer/bureau.edu.cn/ca/ca-cert.pem
+      # rm -f peer/bureau.edu.cn/ca/fabric-ca-server.db
+      # rm -f peer/bureau.edu.cn/ca/IssuerPublicKey
+      # rm -f peer/bureau.edu.cn/ca/IssuerRevocationPublicKey
+      # rm -f peer/bureau.edu.cn/ca/tls-cert.pem
+      # rm -f peer/school1.edu.cn/ca/ca-cert.pem
+      # rm -f peer/school1.edu.cn/ca/fabric-ca-server.db
+      # rm -f peer/school1.edu.cn/ca/IssuerPublicKey
+      # rm -f peer/school1.edu.cn/ca/IssuerRevocationPublicKey
+      # rm -f peer/school1.edu.cn/ca/tls-cert.pem
+      # rm -f peer/school2.edu.cn/ca/ca-cert.pem
+      # rm -f peer/school2.edu.cn/ca/fabric-ca-server.db
+      # rm -f peer/school2.edu.cn/ca/IssuerPublicKey
+      # rm -f peer/school2.edu.cn/ca/IssuerRevocationPublicKey
+      # rm -f peer/school2.edu.cn/ca/tls-cert.pem
       exit;
       ;;
     e)

@@ -35,9 +35,9 @@ package-lock.json
 
 /chaincode/sm/sm
 
-/crypto-config/peerOrganizations/*/ca/msp
-/crypto-config/peerOrganizations/*/ca/*.db
-/crypto-config/peerOrganizations/*/ca/ca-cert.pem
-/crypto-config/peerOrganizations/*/ca/IssuerPublicKey
-/crypto-config/peerOrganizations/*/ca/IssuerRevocationPublicKey
-/crypto-config/peerOrganizations/*/ca/tls-cert.pem
+/peer/*/ca/msp
+/peer/*/ca/*.db
+/peer/*/ca/ca-cert.pem
+/peer/*/ca/IssuerPublicKey
+/peer/*/ca/IssuerRevocationPublicKey
+/peer/*/ca/tls-cert.pem

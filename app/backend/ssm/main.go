@@ -15,7 +15,7 @@ import (
 
 const (
 	mspID        = "EducationBureauMSP"
-	cryptoPath   = "../../../crypto-config/peerOrganizations/bureau.edu.cn/"
+	cryptoPath   = "../../../peer/bureau.edu.cn/"
 	certPath     = cryptoPath + "/users/Admin@bureau.edu.cn/msp/signcerts"
 	keyPath      = cryptoPath + "/users/Admin@bureau.edu.cn/msp/keystore"
 	tlsCertPath  = cryptoPath + "/peers/peer0.bureau.edu.cn/tls/ca.crt"
