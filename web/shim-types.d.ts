@@ -10,6 +10,9 @@ declare module '@vue/runtime-core' {
 declare module '@supabase/gotrue-js' {
   export interface UserAppMetadata {
     identity: UserIdentity
+    certificate: string
+    key: string
+    msp: string
   }
 }
 

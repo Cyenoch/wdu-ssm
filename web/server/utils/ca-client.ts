@@ -15,7 +15,7 @@ export function getCAClient(
   if (_cache.has(url))
     return _cache.get(url)!
   const caClient = new FabricCAServices(url, {
-    trustedRoots: fs.readFileSync(path.resolve('./', pem)),
+    trustedRoots: pem,
     verify: false,
   }, name)
   _cache.set(url, caClient)

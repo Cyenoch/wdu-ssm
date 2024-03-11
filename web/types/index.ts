@@ -1,3 +1,5 @@
+import type peers from '~/config/peers'
+
 export type AvailableCA = 'ca-bureau' | 'ca-school1' | 'ca-school2'
 export interface UserIdentity {
   caname: string
@@ -9,3 +11,5 @@ export interface UserIdentity {
     type: string
   }[]
 }
+
+export type Peer = typeof peers[number]

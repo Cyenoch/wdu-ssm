@@ -1,7 +1,11 @@
+import fs from 'node:fs'
+import type Buffer from 'node:buffer'
+import path from 'node:path'
+
 export type Orgs = ('school1' | 'school2' | 'bureau')
 
 export interface ICAConfig {
-  pem: string
+  pem: Buffer
   url: string
   name: string
   user: string
@@ -9,13 +13,14 @@ export interface ICAConfig {
 }
 export interface IPeerConfig {
   endpoint: string
-  crt: string
+  crt: Buffer
 }
 export interface IUserConfig {
-  keystore: string
-  signcerts: string
+  keystore: Buffer
+  signcerts: Buffer
 }
 export interface IOrgConfig {
+  name: string
   domain: string
   msp: string
   users: {
@@ -52,20 +57,21 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
   },
   orgs: {
     school1: {
+      name: '学校 1',
       domain: 'school1.edu.cn',
       msp: 'School1MSP',
       peer: {
         endpoint: 'peer0.school1.edu.cn:7061',
-        crt: '../crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt',
+        crt: fs.readFileSync('../crypto-config/peerOrganizations/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt'),
       },
       users: {
         user1: {
-          keystore: '../crypto-config/peerOrganizations/school1.edu.cn/users/User1@school1.edu.cn/msp/keystore',
-          signcerts: '../crypto-config/peerOrganizations/school1.edu.cn/users/User1@school1.edu.cn/msp/signcerts',
+          keystore: readFirstDirFile('../crypto-config/peerOrganizations/school1.edu.cn/users/User1@school1.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../crypto-config/peerOrganizations/school1.edu.cn/users/User1@school1.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: '../crypto-config/peerOrganizations/school1.edu.cn/ca/ca-cert.pem',
+        pem: fs.readFileSync('../crypto-config/peerOrganizations/school1.edu.cn/ca/ca-cert.pem'),
         url: 'https://ca.school1.edu.cn:7064',
         name: 'ca-school1',
         user: 'admin',
@@ -73,20 +79,21 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
       },
     },
     school2: {
+      name: '学校 2',
       domain: 'school2.edu.cn',
       msp: 'School2MSP',
       peer: {
         endpoint: 'peer0.school2.edu.cn:7071',
-        crt: '../crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt',
+        crt: fs.readFileSync('../crypto-config/peerOrganizations/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt'),
       },
       users: {
         user1: {
-          keystore: '../crypto-config/peerOrganizations/school2.edu.cn/users/User1@school2.edu.cn/msp/keystore',
-          signcerts: '../crypto-config/peerOrganizations/school2.edu.cn/users/User1@school2.edu.cn/msp/signcerts',
+          keystore: readFirstDirFile('../crypto-config/peerOrganizations/school2.edu.cn/users/User1@school2.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../crypto-config/peerOrganizations/school2.edu.cn/users/User1@school2.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: '../crypto-config/peerOrganizations/school2.edu.cn/ca/ca-cert.pem',
+        pem: fs.readFileSync('../crypto-config/peerOrganizations/school2.edu.cn/ca/ca-cert.pem'),
         url: 'https://ca.school2.edu.cn:7074',
         name: 'ca-school2',
         user: 'admin',
@@ -94,20 +101,21 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
       },
     },
     bureau: {
+      name: '教育局',
       domain: 'bureau.edu.cn',
       msp: 'EducationBureauMSP',
       peer: {
         endpoint: 'peer0.bureau.edu.cn:7051',
-        crt: '../crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt',
+        crt: fs.readFileSync('../crypto-config/peerOrganizations/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt'),
       },
       users: {
         user1: {
-          keystore: '../crypto-config/peerOrganizations/bureau.edu.cn/users/User1@bureau.edu.cn/msp/keystore',
-          signcerts: '../crypto-config/peerOrganizations/bureau.edu.cn/users/User1@bureau.edu.cn/msp/signcerts',
+          keystore: readFirstDirFile('../crypto-config/peerOrganizations/bureau.edu.cn/users/User1@bureau.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../crypto-config/peerOrganizations/bureau.edu.cn/users/User1@bureau.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: '../crypto-config/peerOrganizations/bureau.edu.cn/ca/ca-cert.pem',
+        pem: fs.readFileSync('../crypto-config/peerOrganizations/bureau.edu.cn/ca/ca-cert.pem'),
         url: 'https://ca.bureau.edu.cn:7054',
         name: 'ca-educationbureau',
         user: 'admin',
@@ -115,4 +123,9 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
       },
     },
   },
+}
+
+function readFirstDirFile(_path: string): Buffer {
+  const files = fs.readdirSync(_path)
+  return fs.readFileSync(path.join(_path, files[0]))
 }

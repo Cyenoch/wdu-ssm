@@ -1,38 +1,58 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type Buffer from 'node:buffer'
 import * as crypto from 'node:crypto'
+import type { H3Event } from 'h3'
 import * as grpc from '@grpc/grpc-js'
 import type { Gateway } from '@hyperledger/fabric-gateway'
 import { Contract, Identity, Signer, connect, signers } from '@hyperledger/fabric-gateway'
 import { type IOrgConfig, type IPeerConfig, NetworkConfig, type Orgs } from '~/config/network-config'
+import { serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
+import type { Peer } from '~/types'
+import peers from '~/config/peers'
 
 const utf8Decoder = new TextDecoder()
 const _cache = new Map<string, Gateway>()
 
 // Server only
-export async function getGatewayByOrg(_org: Orgs, user: 'user1' = 'user1') {
+export async function getGatewayByOrg(event: H3Event, _org: Orgs, user: 'user1' = 'user1') {
   const cacheKey = `${_org}-${user}`
   if (_cache.has(cacheKey))
     return _cache.get(cacheKey)!
   const org = NetworkConfig.orgs[_org]
+
   const gateway = await getGateway(
-    org.peer.endpoint,
-    fs.readFileSync(org.peer.crt),
-    org.msp,
-    readFirstDirFile(org.users[user].signcerts),
-    readFirstDirFile(org.users[user].keystore),
+    {
+      name: org.name,
+      msp: org.msp,
+      crt: org.peer.crt,
+      endpoint: org.peer.endpoint,
+    },
+    org.users[user].signcerts,
+    org.users[user].keystore,
   )
   _cache.set(cacheKey, gateway)
   return gateway
 }
 
-export async function getGateway(endpoint: string, peerCrt: Buffer, mspId: string, credentials: Buffer, keystore: Buffer) {
-  const tlsCred = grpc.credentials.createSsl(peerCrt)
-  const _grpc = new grpc.Client(endpoint, tlsCred, {
+export async function getGatewayByUser(event: H3Event) {
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({
+      status: 403,
+      message: '未登录',
+    })
+  }
+  const peer = peers.find(peer => peer.msp === user.app_metadata.msp)!
+  const gateway = getGateway(peer, Buffer.from(user.app_metadata.certificate, 'utf-8'), Buffer.from(user.app_metadata.key, 'utf-8'))
+  return gateway
+}
+
+export async function getGateway(peer: Peer, credentials: Buffer, keystore: Buffer) {
+  const tlsCred = grpc.credentials.createSsl(peer.crt)
+  const _grpc = new grpc.Client(peer.endpoint, tlsCred, {
   })
   const identity = {
-    mspId,
+    mspId: peer.msp,
     credentials,
   }
   const signer = signers.newPrivateKeySigner(
@@ -46,16 +66,16 @@ export async function getGateway(endpoint: string, peerCrt: Buffer, mspId: strin
   return gateway
 }
 
-export async function getNetwork(org: Orgs, channel: string, user: 'user1' = 'user1') {
-  const gateway = (await getGatewayByOrg(org, user))
+export async function getNetwork(event: H3Event, org: Orgs, channel: string, user: 'user1' = 'user1') {
+  const gateway = (await getGatewayByOrg(event, org, user))
   return {
     gateway,
     network: gateway.getNetwork(channel),
   }
 }
 
-export async function getContract(org: Orgs, channel: string, contract: string, user: 'user1' = 'user1') {
-  const result = (await getNetwork(org, channel, user))
+export async function getContract(event: H3Event, org: Orgs, channel: string, contract: string, user: 'user1' = 'user1') {
+  const result = (await getNetwork(event, org, channel, user))
   return {
     ...result,
     contract: result.network.getContract(contract),
@@ -64,9 +84,4 @@ export async function getContract(org: Orgs, channel: string, contract: string, 
 
 export function decode<T>(u8a: Uint8Array): T {
   return JSON.parse(utf8Decoder.decode(u8a)) as T
-}
-
-function readFirstDirFile(_path: string): Buffer {
-  const files = fs.readdirSync(_path)
-  return fs.readFileSync(path.join(_path, files[0]))
 }

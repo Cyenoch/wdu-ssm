@@ -22,9 +22,11 @@ watch(user, (user) => {
           注销
         </Button>
 
-        <Button v-identity-guard="{ affiliation: 'unit.admin' }">
-          管理档案
-        </Button>
+        <NuxtLink to="/students">
+          <Button v-identity-guard="{ affiliation: 'unit.admin' }">
+            管理档案
+          </Button>
+        </NuxtLink>
       </div>
     </div>
   </div>

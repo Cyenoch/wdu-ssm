@@ -1,3 +1,5 @@
+import { NetworkConfig } from './config/network-config'
+import peers from './config/peers'
 import { appDescription } from './constants/index'
 
 export default defineNuxtConfig({
