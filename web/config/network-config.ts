@@ -24,7 +24,7 @@ export interface IOrgConfig {
   domain: string
   msp: string
   users: {
-    user1: IUserConfig
+    user0: IUserConfig
   }
   peer: IPeerConfig
   ca: ICAConfig
@@ -65,13 +65,13 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
         crt: fs.readFileSync('../peer/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt'),
       },
       users: {
-        user1: {
-          keystore: readFirstDirFile('../peer/school1.edu.cn/users/User1@school1.edu.cn/msp/keystore'),
-          signcerts: readFirstDirFile('../peer/school1.edu.cn/users/User1@school1.edu.cn/msp/signcerts'),
+        user0: {
+          keystore: readFirstDirFile('../peer/school1.edu.cn/users/User0@school1.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../peer/school1.edu.cn/users/User0@school1.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: fs.readFileSync('../peer/school1.edu.cn/ca/ca-cert.pem'),
+        pem: fs.readFileSync('../ca/school1/ca-cert.pem'),
         url: 'https://ca.school1.edu.cn:7064',
         name: 'ca-school1',
         user: 'admin',
@@ -87,13 +87,13 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
         crt: fs.readFileSync('../peer/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt'),
       },
       users: {
-        user1: {
-          keystore: readFirstDirFile('../peer/school2.edu.cn/users/User1@school2.edu.cn/msp/keystore'),
-          signcerts: readFirstDirFile('../peer/school2.edu.cn/users/User1@school2.edu.cn/msp/signcerts'),
+        user0: {
+          keystore: readFirstDirFile('../peer/school2.edu.cn/users/User0@school2.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../peer/school2.edu.cn/users/User0@school2.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: fs.readFileSync('../peer/school2.edu.cn/ca/ca-cert.pem'),
+        pem: fs.readFileSync('../ca/school2/ca-cert.pem'),
         url: 'https://ca.school2.edu.cn:7074',
         name: 'ca-school2',
         user: 'admin',
@@ -109,15 +109,15 @@ export const NetworkConfig: INetworkConfig<Orgs> = {
         crt: fs.readFileSync('../peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt'),
       },
       users: {
-        user1: {
-          keystore: readFirstDirFile('../peer/bureau.edu.cn/users/User1@bureau.edu.cn/msp/keystore'),
-          signcerts: readFirstDirFile('../peer/bureau.edu.cn/users/User1@bureau.edu.cn/msp/signcerts'),
+        user0: {
+          keystore: readFirstDirFile('../peer/bureau.edu.cn/users/User0@bureau.edu.cn/msp/keystore'),
+          signcerts: readFirstDirFile('../peer/bureau.edu.cn/users/User0@bureau.edu.cn/msp/signcerts'),
         },
       },
       ca: {
-        pem: fs.readFileSync('../peer/bureau.edu.cn/ca/ca-cert.pem'),
+        pem: fs.readFileSync('../ca/bureau/ca-cert.pem'),
         url: 'https://ca.bureau.edu.cn:7054',
-        name: 'ca-educationbureau',
+        name: 'ca-bureau',
         user: 'admin',
         passwd: 'adminpw',
       },

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { data } = useFetch('/api/contract/sm/students')
+const { data } = useFetch('/api/contract/sm/students', {
+  server: false,
+})
 </script>
 
 <template>

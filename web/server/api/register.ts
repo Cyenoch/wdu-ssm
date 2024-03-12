@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
       : NetworkConfig.orgs[input.school].ca,
   )
 
-  const _gateway = await getGatewayByOrg(event, 'bureau', 'user1')
+  const _gateway = await getGatewayByOrg(event, 'bureau', 'user0')
 
   const network = _gateway.getNetwork(NetworkConfig.contracts.sm.channel)
   const contract = network.getContract(NetworkConfig.contracts.sm.name)

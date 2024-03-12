@@ -6,7 +6,7 @@ import * as grpc from '@grpc/grpc-js'
 import type { Gateway } from '@hyperledger/fabric-gateway'
 import { Contract, Identity, Signer, connect, signers } from '@hyperledger/fabric-gateway'
 import { type IOrgConfig, type IPeerConfig, NetworkConfig, type Orgs } from '~/config/network-config'
-import { serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
+import { serverSupabaseUser } from '#supabase/server'
 import type { Peer } from '~/types'
 import peers from '~/config/peers'
 
@@ -14,7 +14,7 @@ const utf8Decoder = new TextDecoder()
 const _cache = new Map<string, Gateway>()
 
 // Server only
-export async function getGatewayByOrg(event: H3Event, _org: Orgs, user: 'user1' = 'user1') {
+export async function getGatewayByOrg(event: H3Event, _org: Orgs, user: 'user0' = 'user0') {
   const cacheKey = `${_org}-${user}`
   if (_cache.has(cacheKey))
     return _cache.get(cacheKey)!
@@ -36,6 +36,7 @@ export async function getGatewayByOrg(event: H3Event, _org: Orgs, user: 'user1' 
 
 export async function getGatewayByUser(event: H3Event) {
   const user = await serverSupabaseUser(event)
+  console.info('user', user)
   if (!user) {
     throw createError({
       status: 403,
@@ -66,7 +67,7 @@ export async function getGateway(peer: Peer, credentials: Buffer, keystore: Buff
   return gateway
 }
 
-export async function getNetwork(event: H3Event, org: Orgs, channel: string, user: 'user1' = 'user1') {
+export async function getNetwork(event: H3Event, org: Orgs, channel: string, user: 'user0' = 'user0') {
   const gateway = (await getGatewayByOrg(event, org, user))
   return {
     gateway,
@@ -74,7 +75,7 @@ export async function getNetwork(event: H3Event, org: Orgs, channel: string, use
   }
 }
 
-export async function getContract(event: H3Event, org: Orgs, channel: string, contract: string, user: 'user1' = 'user1') {
+export async function getContract(event: H3Event, org: Orgs, channel: string, contract: string, user: 'user0' = 'user0') {
   const result = (await getNetwork(event, org, channel, user))
   return {
     ...result,

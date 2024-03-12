@@ -1,4 +1,4 @@
-import type { AuthError, Session, User } from '@supabase/gotrue-js'
+import type { AuthError, AuthResponse, Session, User } from '@supabase/gotrue-js'
 import type { H3Error } from 'h3'
 import { User as CAUser } from 'fabric-common'
 import { NetworkConfig } from '~/config/network-config'
@@ -16,8 +16,9 @@ export default defineEventHandler<{
     password: string
     school: 'school1' | 'school2'
   }
-}, Promise<User | Session | H3Error>>(async (event) => {
-  const supa = serverSupabaseServiceRole<Database>(event)
+}, Promise<AuthResponse['data'] | User | Session | H3Error>>(async (event) => {
+  const supaService = serverSupabaseServiceRole<Database>(event)
+  const supa = await serverSupabaseClient<Database>(event)
   const input = getQuery(event)
   const { username, password } = input
   const config = input.type === 'Bureau'
@@ -29,6 +30,8 @@ export default defineEventHandler<{
   const user = await serverSupabaseUser(event)
   if (user?.id)
     return user
+
+  console.info('get ca client')
 
   // supabase中没有用户信息,需要enroll获取证书和私钥
   const _ca = getCAClient(config.ca)
@@ -52,10 +55,10 @@ export default defineEventHandler<{
   if (!identity.success)
     return createError(`获取CA Identity失败: ${identity.messages}`)
 
-  const userId = await supa.rpc('get_user_id_by_email', { user_email: email })
+  const userId = await supaService.rpc('get_user_id_by_email', { user_email: email })
   if (!userId.data) {
     // 在supabase中创建用户
-    const userResponse = await supa.auth.admin.createUser({
+    const userResponse = await supaService.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -64,9 +67,8 @@ export default defineEventHandler<{
         certificate: resp.certificate,
         key: resp.key.toBytes(),
         caName: caInfo.caName,
-        caChain: caInfo.caChain,
         identity: identity.result,
-        affiliation: affiliation.result,
+        // affiliation: affiliation.result,
       },
     })
 
@@ -76,15 +78,14 @@ export default defineEventHandler<{
     }
   }
   else {
-    await supa.auth.admin.updateUserById(userId.data, {
+    await supaService.auth.admin.updateUserById(userId.data, {
       app_metadata: {
         msp: config.msp,
         certificate: resp.certificate,
         key: resp.key.toBytes(),
         caName: caInfo.caName,
-        caChain: caInfo.caChain,
         identity: identity.result,
-        affiliation: affiliation.result,
+        // affiliation: affiliation.result,
       },
     })
   }
@@ -93,8 +94,10 @@ export default defineEventHandler<{
     email,
     password,
   })
-  if (signInResult && signInResult.data.session)
-    return signInResult.data.session!
+  if (signInResult && signInResult.data.session) {
+    // const sess = signInResult.data.session!
+    return signInResult.data.session
+  }
 
   console.warn(signInResult)
   return createError(`登录失败: ${JSON.stringify(signInResult.error?.message)}`)

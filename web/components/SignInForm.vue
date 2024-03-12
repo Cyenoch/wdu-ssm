@@ -8,6 +8,11 @@ const props = defineProps<{
 const router = useRouter()
 const toast = useToast()
 const supa = useSupabaseClient<Database>()
+const user = useSupabaseUser()
+
+watch(user, (user) => {
+  console.info('???', user)
+})
 
 const query = ref({
   username: '',
@@ -34,11 +39,16 @@ watch(error, (error) => {
     toast.add({ severity: 'error', summary: '登录失败', detail: error.data.message, life: 5000 })
 })
 
-watch(data, (data) => {
+watch(data, async (data) => {
   if (data) {
-    if ('access_token' in data)
-      supa.auth.setSession(data)
+    if ('refresh_token' in data) {
+      // await supa.auth.setSession(data.session!)
+      await supa.auth.setSession(data)
+      console.info('??')
+    }
+
     if ('id' in data || 'access_token' in data)
+    // if (false)
       router.replace(router.currentRoute.value.query.redirectTo?.toString() ?? { name: 'me' })
   }
 })
@@ -83,6 +93,4 @@ async function signIn() {
   </Card>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
