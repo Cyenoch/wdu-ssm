@@ -41,3 +41,4 @@ package-lock.json
 /peer/*/ca/IssuerPublicKey
 /peer/*/ca/IssuerRevocationPublicKey
 /peer/*/ca/tls-cert.pem
+/ca/*/msp/keystore/

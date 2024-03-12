@@ -1,24 +1,12 @@
 #!/bin/bash
 
-export PATH=${PWD}/bin/:$PATH
-export PATH=${PWD}/scripts/:$PATH
-
-export FABRIC_CFG_PATH=${PWD}/
-
-source set_bureau.sh
-
-export ORDERER_0=${PWD}/orderer/edu.cn/orderers/orderer0.edu.cn
-export ORDERER_CAFILE=${ORDERER_0}/msp/tlscacerts/tlsca.edu.cn-cert.pem
-export EDU1_CAFILE=${PWD}/peer/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt
-export EDU2_CAFILE=${PWD}/peer/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt
-export BUREAU_CAFILE=${PWD}/peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt
-
+source .profile
 
 while getopts "deih" opt; do
   case $opt in
     i)
       echo "-i initial config and block";
-      cryptogen generate --config ./crypto-config.yaml --output=./crypto-config;
+      # cryptogen generate --config ./crypto-config.yaml --output=./crypto-config;
       configtxgen -profile EducationNetwork -outputBlock ./system-genesis-block/genesis.block -channelID system-channel;
       configtxgen -profile TwoEducationChannel -outputCreateChannelTx ./channel-artifacts/two-edu-channel.tx -channelID two-edu-channel;
       exit;
@@ -26,9 +14,9 @@ while getopts "deih" opt; do
     d)
       echo "-d will remove docker-compose down -v and reset ca";
       docker-compose down -v;
-      sudo rm -rf peer/bureau.edu.cn/ca
-      sudo rm -rf peer/school1.edu.cn/ca
-      sudo rm -rf peer/school2.edu.cn/ca
+      # sudo rm -rf peer/bureau.edu.cn/ca
+      # sudo rm -rf peer/school1.edu.cn/ca
+      # sudo rm -rf peer/school2.edu.cn/ca
       # rm -f peer/bureau.edu.cn/ca/ca-cert.pem
       # rm -f peer/bureau.edu.cn/ca/fabric-ca-server.db
       # rm -f peer/bureau.edu.cn/ca/IssuerPublicKey

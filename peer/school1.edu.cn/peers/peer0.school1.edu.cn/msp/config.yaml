@@ -1,14 +1,14 @@
 NodeOUs:
   Enable: true
   ClientOUIdentifier:
-    Certificate: cacerts/ca.school1.edu.cn-cert.pem
+    Certificate: cacerts/localhost-7064-ca-school1.pem
     OrganizationalUnitIdentifier: client
   PeerOUIdentifier:
-    Certificate: cacerts/ca.school1.edu.cn-cert.pem
+    Certificate: cacerts/localhost-7064-ca-school1.pem
     OrganizationalUnitIdentifier: peer
   AdminOUIdentifier:
-    Certificate: cacerts/ca.school1.edu.cn-cert.pem
+    Certificate: cacerts/localhost-7064-ca-school1.pem
     OrganizationalUnitIdentifier: admin
   OrdererOUIdentifier:
-    Certificate: cacerts/ca.school1.edu.cn-cert.pem
+    Certificate: cacerts/localhost-7064-ca-school1.pem
     OrganizationalUnitIdentifier: orderer
