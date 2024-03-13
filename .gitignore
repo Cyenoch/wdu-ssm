@@ -35,5 +35,5 @@ package-lock.json
 
 /chaincode/sm/sm
 
-/ca/*/msp/keystore/
-/ca/*/*.db
+/ca/*/msp/keystore/*
+# /ca/*/*.db

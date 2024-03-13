@@ -44,6 +44,8 @@ while getopts "deih" opt; do
   esac
 done
 
+(cd buns; bun scripts/enroll-ca-cert.ts)
+
 docker-compose up -d
 
 echo "waiting docker container up..."
