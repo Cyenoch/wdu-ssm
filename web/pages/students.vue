@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = useFetch('/api/contract/sm/students', {
+const { data: students } = useFetch('/api/contract/sm/students', {
   server: false,
 })
 </script>
@@ -10,12 +10,27 @@ const { data } = useFetch('/api/contract/sm/students', {
       管理学生档案
     </h1>
 
-    <div>
-      {{ data }}
+    <div mt-4>
+      <div mb-4 text-end>
+        <Button color="primary" size="small">
+          新增学生
+        </Button>
+      </div>
+
+      <DataTable :value="students">
+        <Column header="#">
+          <template #body="{ index }">
+            {{ index + 1 }}
+          </template>
+        </Column>
+        <Column field="ID" header="id" />
+        <Column field="Name" header="Name" />
+        <Column field="School" header="School" />
+        <Column field="Grade" header="Grade" />
+        <Column field="Major" header="Major" />
+      </DataTable>
     </div>
   </div>
 </template>1
 
-<style scoped>
-
-</style>
+<style scoped></style>

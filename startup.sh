@@ -4,14 +4,6 @@ source .profile
 
 while getopts "deih" opt; do
   case $opt in
-    i)
-      echo "-i initial config and block";
-      # cryptogen generate --config ./crypto-config.yaml --output=./crypto-config; now use ca-server
-      (cd buns; bun scripts/setup-ca.ts)
-      configtxgen -profile EducationNetwork -outputBlock ./system-genesis-block/genesis.block -channelID system-channel;
-      configtxgen -profile TwoEducationChannel -outputCreateChannelTx ./channel-artifacts/two-edu-channel.tx -channelID two-edu-channel;
-      # exit;
-      ;;
     d)
       echo "-d will remove docker-compose down -v and reset ca";
       docker-compose down -v;
@@ -23,6 +15,14 @@ while getopts "deih" opt; do
       sudo rm -rf ca/*/msp
       sudo rm -rf ca/*/ca-cert.pem
       exit;
+      ;;
+    i)
+      echo "-i initial config and block";
+      # cryptogen generate --config ./crypto-config.yaml --output=./crypto-config; now use ca-server
+      (cd buns; bun scripts/setup-ca.ts)
+      configtxgen -profile EducationNetwork -outputBlock ./system-genesis-block/genesis.block -channelID system-channel;
+      configtxgen -profile TwoEducationChannel -outputCreateChannelTx ./channel-artifacts/two-edu-channel.tx -channelID two-edu-channel;
+      # exit;
       ;;
     e)
       echo "-e echo something"
@@ -44,13 +44,13 @@ while getopts "deih" opt; do
   esac
 done
 
-(cd buns; bun scripts/enroll-ca-cert.ts)
+# (cd buns; bun scripts/enroll-ca-cert.ts)
 
 docker-compose up -d
 
 echo "waiting docker container up..."
 
-sleep 2
+sleep 3
 
 source set_bureau.sh
 peer channel create -o localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn -c two-edu-channel -f ./channel-artifacts/two-edu-channel.tx --outputBlock ./channel-artifacts/two-edu-channel.block --tls --cafile ${ORDERER_CAFILE}

@@ -6,11 +6,15 @@ import { serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser } f
 import type { Database } from '~/types/schema.gen'
 import peers from '~/config/peers'
 import { getGatewayByUser } from '~/server/utils/gateway'
+import type { Student } from '~/types/cc-sm'
 
 export default defineEventHandler(async (event) => {
   const gateway = await getGatewayByUser(event)
   const network = gateway.getNetwork(NetworkConfig.contracts.sm.channel)
   const contract = network.getContract(NetworkConfig.contracts.sm.name)
 
-  return contract.evaluateTransaction('GetStudents')
+  const students = await contract.evaluateTransaction('GetStudents')
+  if (!students.length)
+    return []
+  return decode<Student[]>(students)
 })

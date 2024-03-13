@@ -9,10 +9,6 @@
   },
 
   {
-    "name": "School1Administrator"
-  },
-
-  {
       "name": "School2Students",
       "policy": "OR('School2MSP.member', 'EducationBureauMSP.member')",
       "requiredPeerCount": 0,

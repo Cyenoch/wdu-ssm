@@ -16,13 +16,15 @@ async function enrollOrgCA(
     caName,
     caHost,
     caPort,
-    kind
+    kind,
+    userAffiliation
   }: {
     host: string,
     port: number,
     caName: `ca-${string}`,
     caHost: string,
     caPort: number,
+    userAffiliation: string,
     kind: 'peer' | 'orderer'
   }
 ) {
@@ -79,7 +81,7 @@ async function enrollOrgCA(
   console.info(`注册 users ${host}`)
   if (kind === 'peer') {
     await $`fabric-ca-client register --caname ${caName} --id.name peer0 --id.secret peer0pw --id.type peer --tls.certfiles ${caCert}`
-    await $`fabric-ca-client register --caname ${caName} --id.name user0 --id.secret user0pw --id.type client --tls.certfiles ${caCert}`
+    await $`fabric-ca-client register --caname ${caName} --id.name user0 --id.affiliation ${userAffiliation} --id.secret user0pw --id.type client --tls.certfiles ${caCert}`
   }
   else
     await $`fabric-ca-client register --caname ${caName} --id.name orderer0 --id.secret orderer0pw --id.type orderer --tls.certfiles ${caCert}`
@@ -128,7 +130,8 @@ await enrollOrgCA({
   caName: 'ca-bureau',
   caHost: 'localhost',
   caPort: 7054,
-  kind: 'peer'
+  kind: 'peer',
+  userAffiliation: 'bureau.admin'
 })
 await enrollOrgCA({
   host: 'school1.edu.cn',
@@ -136,7 +139,8 @@ await enrollOrgCA({
   caName: 'ca-school1',
   caHost: 'localhost',
   caPort: 7064,
-  kind: 'peer'
+  kind: 'peer',
+  userAffiliation: 'school1.admin'
 })
 await enrollOrgCA({
   host: 'school2.edu.cn',
@@ -144,7 +148,8 @@ await enrollOrgCA({
   caName: 'ca-school2',
   caHost: 'localhost',
   caPort: 7074,
-  kind: 'peer'
+  kind: 'peer',
+  userAffiliation: 'school2.admin'
 })
 await enrollOrgCA({
   host: 'edu.cn',
@@ -152,5 +157,6 @@ await enrollOrgCA({
   caName: 'ca-orderer',
   caHost: 'localhost',
   caPort: 7044,
-  kind: 'orderer'
+  kind: 'orderer',
+  userAffiliation: 'orderer.admin'
 })

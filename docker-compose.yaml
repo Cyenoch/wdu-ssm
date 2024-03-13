@@ -56,6 +56,8 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on:
+      - orderer0.edu.cn
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -87,6 +89,8 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on:
+      - orderer0.edu.cn
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -118,6 +122,8 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/peer/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on:
+      - orderer0.edu.cn
     command: peer node start
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
