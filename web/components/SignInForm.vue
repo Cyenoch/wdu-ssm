@@ -41,14 +41,10 @@ watch(error, (error) => {
 
 watch(data, async (data) => {
   if (data) {
-    if ('refresh_token' in data) {
-      // await supa.auth.setSession(data.session!)
+    if ('refresh_token' in data)
       await supa.auth.setSession(data)
-      console.info('??')
-    }
-
     if ('id' in data || 'access_token' in data)
-    // if (false)
+      // if (false)
       router.replace(router.currentRoute.value.query.redirectTo?.toString() ?? { name: 'me' })
   }
 })

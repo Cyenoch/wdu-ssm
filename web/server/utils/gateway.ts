@@ -36,7 +36,6 @@ export async function getGatewayByOrg(event: H3Event, _org: Orgs, user: 'user0' 
 
 export async function getGatewayByUser(event: H3Event) {
   const user = await serverSupabaseUser(event)
-  console.info('user', user)
   if (!user) {
     throw createError({
       status: 403,

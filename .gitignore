@@ -35,10 +35,5 @@ package-lock.json
 
 /chaincode/sm/sm
 
-/peer/*/ca/msp
-/peer/*/ca/*.db
-/peer/*/ca/ca-cert.pem
-/peer/*/ca/IssuerPublicKey
-/peer/*/ca/IssuerRevocationPublicKey
-/peer/*/ca/tls-cert.pem
 /ca/*/msp/keystore/
+/ca/*/*.db

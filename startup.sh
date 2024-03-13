@@ -6,32 +6,22 @@ while getopts "deih" opt; do
   case $opt in
     i)
       echo "-i initial config and block";
-      # cryptogen generate --config ./crypto-config.yaml --output=./crypto-config;
+      # cryptogen generate --config ./crypto-config.yaml --output=./crypto-config; now use ca-server
+      (cd buns; bun scripts/setup-ca.ts)
       configtxgen -profile EducationNetwork -outputBlock ./system-genesis-block/genesis.block -channelID system-channel;
       configtxgen -profile TwoEducationChannel -outputCreateChannelTx ./channel-artifacts/two-edu-channel.tx -channelID two-edu-channel;
-      exit;
+      # exit;
       ;;
     d)
       echo "-d will remove docker-compose down -v and reset ca";
       docker-compose down -v;
-      # sudo rm -rf peer/bureau.edu.cn/ca
-      # sudo rm -rf peer/school1.edu.cn/ca
-      # sudo rm -rf peer/school2.edu.cn/ca
-      # rm -f peer/bureau.edu.cn/ca/ca-cert.pem
-      # rm -f peer/bureau.edu.cn/ca/fabric-ca-server.db
-      # rm -f peer/bureau.edu.cn/ca/IssuerPublicKey
-      # rm -f peer/bureau.edu.cn/ca/IssuerRevocationPublicKey
-      # rm -f peer/bureau.edu.cn/ca/tls-cert.pem
-      # rm -f peer/school1.edu.cn/ca/ca-cert.pem
-      # rm -f peer/school1.edu.cn/ca/fabric-ca-server.db
-      # rm -f peer/school1.edu.cn/ca/IssuerPublicKey
-      # rm -f peer/school1.edu.cn/ca/IssuerRevocationPublicKey
-      # rm -f peer/school1.edu.cn/ca/tls-cert.pem
-      # rm -f peer/school2.edu.cn/ca/ca-cert.pem
-      # rm -f peer/school2.edu.cn/ca/fabric-ca-server.db
-      # rm -f peer/school2.edu.cn/ca/IssuerPublicKey
-      # rm -f peer/school2.edu.cn/ca/IssuerRevocationPublicKey
-      # rm -f peer/school2.edu.cn/ca/tls-cert.pem
+      sudo rm -rf peer/*/*
+      sudo rm -rf orderer/*/*
+      sudo rm -rf ca/*/*.db
+      sudo rm -rf ca/*/Issuer*
+      sudo rm -rf ca/*/tls-cert.pem
+      sudo rm -rf ca/*/msp
+      sudo rm -rf ca/*/ca-cert.pem
       exit;
       ;;
     e)

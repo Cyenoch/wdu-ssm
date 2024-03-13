@@ -242,11 +242,11 @@ ldap:
 # which are always stored in lower case.
 #############################################################################
 affiliations:
-   org1:
-      - department1
-      - department2
-   org2:
-      - department1
+  school2:
+    - admin
+    - teacher
+    - student
+    - graduated
 
 #############################################################################
 #  Signing section
@@ -319,7 +319,7 @@ csr:
         O: Hyperledger
         OU: Fabric
    hosts:
-     - 8637e7511c86
+     - 142dffc82749
      - localhost
    ca:
       expiry: 131400h
