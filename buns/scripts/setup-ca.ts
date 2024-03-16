@@ -131,7 +131,7 @@ await enrollOrgCA({
   caHost: 'localhost',
   caPort: 7054,
   kind: 'peer',
-  userAffiliation: 'bureau.admin'
+  userAffiliation: 'bureau.manager'
 })
 await enrollOrgCA({
   host: 'school1.edu.cn',
@@ -140,7 +140,7 @@ await enrollOrgCA({
   caHost: 'localhost',
   caPort: 7064,
   kind: 'peer',
-  userAffiliation: 'school1.admin'
+  userAffiliation: 'school1.manager'
 })
 await enrollOrgCA({
   host: 'school2.edu.cn',
@@ -149,7 +149,7 @@ await enrollOrgCA({
   caHost: 'localhost',
   caPort: 7074,
   kind: 'peer',
-  userAffiliation: 'school2.admin'
+  userAffiliation: 'school2.manager'
 })
 await enrollOrgCA({
   host: 'edu.cn',
@@ -158,5 +158,5 @@ await enrollOrgCA({
   caHost: 'localhost',
   caPort: 7044,
   kind: 'orderer',
-  userAffiliation: 'orderer.admin'
+  userAffiliation: 'orderer.manager'
 })

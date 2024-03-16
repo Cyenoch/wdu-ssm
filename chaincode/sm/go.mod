@@ -1,7 +1,7 @@
 // TODO:
 module github.com/Cyenoch/wdu-ssm/chaincode/sm
 
-go 1.21
+go 1.17
 
 require github.com/hyperledger/fabric-contract-api-go v1.2.2
 

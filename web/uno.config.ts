@@ -13,6 +13,7 @@ export default defineConfig({
   shortcuts: [
     ['row', 'flex flex-row'],
     ['col', 'flex flex-col'],
+    ['limited-w', 'max-w-1200px m-auto p-4 lg:p-8 xl:px-4 xl:py-12'],
     [/^wh-(\d)$/, ([, d]) => `w-${d} h-${d}`],
   ],
   theme: {

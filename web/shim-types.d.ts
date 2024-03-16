@@ -1,15 +1,17 @@
 import type { DirectiveIdentityGuard } from './plugins/directive'
-import type { UserIdentity } from './types/index'
+import type { CAIdentity, ClientIdentity } from './types'
 
 declare module '@vue/runtime-core' {
+
   export interface ComponentCustomProperties {
     vIdentityGuard: typeof DirectiveIdentityGuard
   }
 }
 
 declare module '@supabase/gotrue-js' {
+
   export interface UserAppMetadata {
-    identity: UserIdentity
+    identity: ClientIdentity
     certificate: string
     key: string
     msp: string

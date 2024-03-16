@@ -13,14 +13,14 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.8.1",
+    "@antfu/eslint-config": "^2.8.3",
     "@iconify-json/carbon": "^1.1.31",
     "@iconify-json/twemoji": "^1.1.15",
     "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/supabase": "^1.1.7",
     "@pinia/nuxt": "^0.5.1",
-    "@unocss/eslint-config": "^0.58.5",
-    "@unocss/nuxt": "^0.58.5",
+    "@unocss/eslint-config": "^0.58.6",
+    "@unocss/nuxt": "^0.58.6",
     "@vueuse/nuxt": "^10.9.0",
     "consola": "^3.2.3",
     "eslint-plugin-format": "^0.1.0",
@@ -35,8 +35,9 @@
   },
   "dependencies": {
     "@hyperledger/fabric-gateway": "^1.5.0",
+    "date-fns": "^3.5.0",
     "fabric-ca-client": "^2.2.20",
     "fabric-network": "^2.2.20",
-    "primevue": "^3.49.1"
+    "primevue": "^3.50.0"
   }
 }

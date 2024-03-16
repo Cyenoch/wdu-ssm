@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import type Buffer from 'node:buffer'
 import path from 'node:path'
+import type { AvailableMSP } from '~/types'
 
 export type Orgs = ('school1' | 'school2' | 'bureau')
 
@@ -22,7 +23,7 @@ export interface IUserConfig {
 export interface IOrgConfig {
   name: string
   domain: string
-  msp: string
+  msp: AvailableMSP
   users: {
     user0: IUserConfig
   }

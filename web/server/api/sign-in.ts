@@ -4,26 +4,22 @@ import { User as CAUser } from 'fabric-common'
 import { NetworkConfig } from '~/config/network-config'
 import { serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import type { Database } from '~/types/schema.gen'
+import type { AvailableMSP } from '~/types'
 
 export default defineEventHandler<{
   query: {
-    type: 'Bureau'
+    msp: AvailableMSP
     username: string
     password: string
-  } | {
-    type: 'School'
-    username: string
-    password: string
-    school: 'school1' | 'school2'
   }
 }, Promise<AuthResponse['data'] | User | Session | H3Error>>(async (event) => {
   const supaService = serverSupabaseServiceRole<Database>(event)
   const supa = await serverSupabaseClient<Database>(event)
   const input = getQuery(event)
   const { username, password } = input
-  const config = input.type === 'Bureau'
-    ? NetworkConfig.orgs.bureau
-    : NetworkConfig.orgs[input.school]
+  const config = Object.values(NetworkConfig.orgs).find(org => org.msp === input.msp)
+  if (!config)
+    throw createError('MSP Not exists')
   const email = `${username}@${config.domain}`
 
   // 如果当前已经登录,则返回当前登录的信息
@@ -34,24 +30,17 @@ export default defineEventHandler<{
   console.info('get ca client')
 
   // supabase中没有用户信息,需要enroll获取证书和私钥
-  const _ca = getCAClient(config.ca)
+  const { caClient, caUser } = await getCAClient(config)
 
-  const resp = await _ca.enroll({
+  const cert = await caClient.enroll({
     enrollmentID: username,
     enrollmentSecret: password,
   })
-  const caUser = CAUser.createUser(
-    username,
-    password,
-    config.msp,
-    resp.certificate,
-    resp.key.toBytes(),
-  )
-  const caInfo = await _ca.getCaInfo(caUser)
-  const affiliation = await _ca.newAffiliationService().getAll(caUser)
-  const identity = await _ca.newIdentityService().getAll(caUser)
-  if (!affiliation.success)
-    return createError(`获取Affiliation失败: ${affiliation.messages}`)
+
+  console.info('get affiliation and identity')
+
+  const identity = await caClient.newIdentityService().getOne(username, caUser)
+
   if (!identity.success)
     return createError(`获取CA Identity失败: ${identity.messages}`)
 
@@ -64,11 +53,9 @@ export default defineEventHandler<{
       email_confirm: true,
       app_metadata: {
         msp: config.msp,
-        certificate: resp.certificate,
-        key: resp.key.toBytes(),
-        caName: caInfo.caName,
+        certificate: cert.certificate,
+        key: cert.key.toBytes(),
         identity: identity.result,
-        // affiliation: affiliation.result,
       },
     })
 
@@ -81,11 +68,9 @@ export default defineEventHandler<{
     await supaService.auth.admin.updateUserById(userId.data, {
       app_metadata: {
         msp: config.msp,
-        certificate: resp.certificate,
-        key: resp.key.toBytes(),
-        caName: caInfo.caName,
+        certificate: cert.certificate,
+        key: cert.key.toBytes(),
         identity: identity.result,
-        // affiliation: affiliation.result,
       },
     })
   }

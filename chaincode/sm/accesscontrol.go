@@ -14,17 +14,24 @@ func GetMSPID(ctx contractapi.TransactionContextInterface) string {
 }
 
 // AssertAdmin Check if user is admin
-func AssertAdmin(ctx contractapi.TransactionContextInterface, allowedMspIDs ...string) error {
+func AssertManager(ctx contractapi.TransactionContextInterface, allowedMspIDs ...string) error {
 	return CheckAffiliation(ctx,
-		"bureau.admin",
-		"school1.admin",
-		"school2.admin",
+		"bureau.manager",
+		"school1.manager",
+		"school2.manager",
 	)
 }
 
 // CheckMspID 检查用户是否属于指定的MSP。
 func CheckMspID(ctx contractapi.TransactionContextInterface, allowedMspIDs ...string) error {
-	mspID := GetMSPID(ctx)
+	clientID := ctx.GetClientIdentity()
+	cert, _ := clientID.GetX509Certificate()
+
+	if Contains(cert.Subject.OrganizationalUnit, "admin") {
+		return nil
+	}
+
+	mspID, _ := clientID.GetMSPID()
 
 	for _, allowedMspID := range allowedMspIDs {
 		if mspID == allowedMspID {
@@ -38,6 +45,17 @@ func CheckMspID(ctx contractapi.TransactionContextInterface, allowedMspIDs ...st
 // CheckAffiliation 检查用户是否具有访问特定资源的权限
 func CheckAffiliation(ctx contractapi.TransactionContextInterface, requiredAffiliations ...string) error {
 	clientID := ctx.GetClientIdentity()
+	cert, _ := clientID.GetX509Certificate()
+
+	if Contains(cert.Subject.OrganizationalUnit, "admin") {
+		return nil
+	}
+
+	mspID, _ := clientID.GetMSPID()
+
+	if mspID == "EducationBureauMSP" {
+		return nil
+	}
 
 	// 获取hf.Affiliation属性
 	affiliation, found, err := clientID.GetAttributeValue("hf.Affiliation")
@@ -60,7 +78,7 @@ func CheckAffiliation(ctx contractapi.TransactionContextInterface, requiredAffil
 	}
 
 	// 如果没有任何一个所需隶属关系被满足
-	return fmt.Errorf("user does not have required affiliation")
+	return fmt.Errorf("user does not have required affiliation. \n your affiliation: %v \n required affiliations: %v", affiliation, requiredAffiliations)
 }
 
 // isSubset 检查第一个切片是否是第二个切片的子集
@@ -79,9 +97,9 @@ func isSubset(userAffiliations, requiredParts []string) bool {
 /**
 
 allowedMspAndAffiliations := map[string][]string{
-	"EducationBureauMSP": {"bureau.admin"},
-	"School1MSP":         {"school1.admin", "school1.teacher"},
-	"School2MSP":         {"school2.admin", "school2.teacher"},
+	"EducationBureauMSP": {"bureau.manager"},
+	"School1MSP":         {"school1.manager", "school1.teacher"},
+	"School2MSP":         {"school2.manager", "school2.teacher"},
 }
 
 **/

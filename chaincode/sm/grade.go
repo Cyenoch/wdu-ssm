@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -67,7 +68,7 @@ func (s *SmartContract) CreateStudentGrade(ctx contractapi.TransactionContextInt
 	if err != nil {
 		return err
 	}
-	err = AssertAdmin(ctx)
+	err = AssertManager(ctx)
 	if err != nil {
 		return err
 	}
@@ -87,6 +88,7 @@ func (s *SmartContract) CreateStudentGrade(ctx contractapi.TransactionContextInt
 	}
 
 	grade.ID = key
+	grade.ModificationDate = time.Now().Format(time.RFC3339)
 	gradeBytes, err := json.Marshal(grade)
 	if err != nil {
 		return err

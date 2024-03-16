@@ -1,3 +1,5 @@
+/* eslint-disable nuxt/prefer-import-meta */
+import FocusTrap from 'primevue/focustrap'
 import type { Directive } from 'vue'
 import type { IdentityGuardBinding } from '~/types/directives'
 
@@ -9,24 +11,8 @@ export const DirectiveIdentityGuard: Directive<HTMLElement, IdentityGuardBinding
   if (user.value) {
     const identity = user.value.app_metadata.identity
     const opt = binding.value
-    if ('id' in opt) {
-      if (identity.identities.find(
-        id => id.id === opt.id,
-      ))
-        visible = true
-    }
-    else if ('affiliation' in opt) {
-      if (identity.identities.find(
-        id => id.affiliation === opt.affiliation,
-      ))
-        visible = true
-    }
-    else if ('oneOfAffiliation' in opt) {
-      if (identity.identities.find(
-        id => opt.oneOfAffiliation.includes(id.affiliation),
-      ))
-        visible = true
-    }
+    if (identity.affiliation.match(opt.affiliation))
+      visible = true
   }
   const displayBefore = Reflect.get(el, '_DirectiveIdentityGuard.display')
   if (!visible && el.style.display !== 'none') {

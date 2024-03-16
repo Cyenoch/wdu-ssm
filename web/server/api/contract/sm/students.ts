@@ -5,16 +5,23 @@ import { NetworkConfig } from '~/config/network-config'
 import { serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import type { Database } from '~/types/schema.gen'
 import peers from '~/config/peers'
-import { getGatewayByUser } from '~/server/utils/gateway'
+import { getContractByUser, getGatewayByUser } from '~/server/utils/gateway'
 import type { Student } from '~/types/cc-sm'
 
 export default defineEventHandler(async (event) => {
-  const gateway = await getGatewayByUser(event)
-  const network = gateway.getNetwork(NetworkConfig.contracts.sm.channel)
-  const contract = network.getContract(NetworkConfig.contracts.sm.name)
+  const {
+    size,
+    bookmark,
+  } = getQuery(event)
 
-  const students = await contract.evaluateTransaction('GetStudents')
+  const { contract } = await getContractByUser(event)
+
+  const students = await contract.evaluateTransaction(
+    'QueryAllStudents',
+    size?.toString() ?? '20',
+    bookmark?.toString() ?? '',
+  )
   if (!students.length)
     return []
-  return decode<Student[]>(students)
+  return decode<{ items: Student[], bookmark: string }>(students)
 })

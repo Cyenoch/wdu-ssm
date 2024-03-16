@@ -130,15 +130,15 @@ export CC_ID=$(peer lifecycle chaincode queryinstalled | awk -F'Package ID:' '{p
 echo "CC_ID = $CC_ID"
 
 source set_bureau.sh
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.0 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
 source set_edu1.sh
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.0 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
 source set_edu2.sh
-peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.1 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
+peer lifecycle chaincode approveformyorg --channelID two-edu-channel --name sm --version 1.0 --package-id ${CC_ID} --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn
 
 source set_bureau.sh
-peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --output json
-peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.1 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn --peerAddresses peer0.bureau.edu.cn:7051 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7061 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7071 --tlsRootCertFiles ${EDU2_CAFILE} 
+peer lifecycle chaincode checkcommitreadiness --channelID two-edu-channel --name sm --version 1.0 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --output json
+peer lifecycle chaincode commit --channelID two-edu-channel --name sm --version 1.0 --sequence 1 --tls --cafile ${ORDERER_CAFILE} --orderer localhost:7050 --ordererTLSHostnameOverride orderer0.edu.cn --peerAddresses peer0.bureau.edu.cn:7051 --tlsRootCertFiles ${BUREAU_CAFILE} --peerAddresses peer0.school1.edu.cn:7061 --tlsRootCertFiles ${EDU1_CAFILE} --peerAddresses peer0.school2.edu.cn:7071 --tlsRootCertFiles ${EDU2_CAFILE} 
 peer lifecycle chaincode querycommitted --channelID two-edu-channel --name sm --cafile ${ORDERER_CAFILE}
 
 echo "calling init ledger..."
@@ -147,6 +147,6 @@ peer chaincode invoke -C two-edu-channel -n sm -c '{"function":"InitLedger","Arg
 sleep 2
 
 echo "querying students..."
-peer chaincode query -C two-edu-channel -n sm -c '{"Args":["GetStudents"]}'
+peer chaincode query -C two-edu-channel -n sm -c '{"Args":["QueryStudent", "123"]}'
 
 echo "done."

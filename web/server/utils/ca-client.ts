@@ -1,16 +1,26 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import FabricCAServices from 'fabric-ca-client'
-import type { ICAConfig } from '../../config/network-config'
+import { User as CAUser } from 'fabric-common'
+import type { ICAConfig, IOrgConfig } from '../../config/network-config'
 
-const _cache = new Map<string, FabricCAServices>()
+const _cache = new Map<string, {
+  caClient: FabricCAServices
+  caUser: CAUser
+  cert: FabricCAServices.IEnrollResponse
+}>()
 
-export function getCAClient(
+export async function getCAClient(
   {
-    pem,
-    url,
-    name,
-  }: ICAConfig,
+    msp,
+    ca: {
+      pem,
+      url,
+      name,
+      user,
+      passwd,
+    },
+  }: IOrgConfig,
 ) {
   if (_cache.has(url))
     return _cache.get(url)!
@@ -18,6 +28,23 @@ export function getCAClient(
     trustedRoots: pem,
     verify: false,
   }, name)
-  _cache.set(url, caClient)
-  return caClient
+
+  const resp = await caClient.enroll({
+    enrollmentID: user,
+    enrollmentSecret: passwd,
+  })
+
+  const caUser = CAUser.createUser(
+    user,
+    passwd,
+    msp,
+    resp.certificate,
+    resp.key.toBytes(),
+  )
+  _cache.set(url, {
+    caClient,
+    caUser,
+    cert: resp,
+  })
+  return _cache.get(url)!
 }

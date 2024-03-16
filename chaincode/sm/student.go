@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -26,6 +27,23 @@ func AssertStateOwner(ctx contractapi.TransactionContextInterface, studentID str
 	return nil
 }
 
+func GetStudent(ctx contractapi.TransactionContextInterface, studentId string) (*Student, error) {
+	studentBytes, err := ctx.GetStub().GetState(studentId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get student: %v", err)
+	}
+	if studentBytes == nil {
+		return nil, fmt.Errorf("student not found: %s", studentId)
+	}
+
+	var student Student
+	err = json.Unmarshal(studentBytes, &student)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal student: %v", err)
+	}
+	return &student, nil
+}
+
 func (s *SmartContract) StudentExists(ctx contractapi.TransactionContextInterface, studentID string) bool {
 	bytes, _ := ctx.GetStub().GetState(studentID)
 	return bytes != nil
@@ -34,7 +52,7 @@ func (s *SmartContract) StudentExists(ctx contractapi.TransactionContextInterfac
 // CreateStudent 创建一个新的学生记录
 func (s *SmartContract) CreateStudent(ctx contractapi.TransactionContextInterface, studentJSON string) error {
 	// 验证是否有权限创建学生信息
-	err := AssertAdmin(ctx)
+	err := AssertManager(ctx)
 	if err != nil {
 		return err
 	}
@@ -44,6 +62,7 @@ func (s *SmartContract) CreateStudent(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal student: %v", err)
 	}
+	fmt.Printf("parsed: %v \noriginal: %v\n", studentJSON, student)
 
 	// 检查学生是否已存在
 	exists := s.StudentExists(ctx, student.ID)
@@ -51,11 +70,26 @@ func (s *SmartContract) CreateStudent(ctx contractapi.TransactionContextInterfac
 		return fmt.Errorf("student already exists: %s", student.ID)
 	}
 
+	msp := GetMSPID(ctx)
+	if msp != "EducationBureauMSP" {
+		student.School = msp
+	} else if student.School == "" {
+		return fmt.Errorf("school is nil")
+	}
+
+	if student.Name == "" {
+		return fmt.Errorf("name is null")
+	}
+
+	student.CreationDate = time.Now().Format(time.RFC3339)
+	student.Graduated = false
+
 	// 存储学生信息到状态数据库
 	studentBytes, err := json.Marshal(student)
 	if err != nil {
 		return fmt.Errorf("failed to marshal student: %v", err)
 	}
+	fmt.Printf("put: %v\n", student)
 
 	return ctx.GetStub().PutState(student.ID, studentBytes)
 }
@@ -63,19 +97,39 @@ func (s *SmartContract) CreateStudent(ctx contractapi.TransactionContextInterfac
 // UpdateStudent 修改现有的学生记录
 func (s *SmartContract) UpdateStudent(ctx contractapi.TransactionContextInterface, studentID string, studentUpdateJSON string) error {
 	// 验证是否有权限修改学生信息
-	err := AssertAdmin(ctx)
+	err := AssertManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	// 检查学生是否存在
-	exists := s.StudentExists(ctx, studentID)
-	if !exists {
-		return fmt.Errorf("student does not exist: %s", studentID)
+	existOne, err := GetStudent(ctx, studentID)
+	if err != nil {
+		return err
 	}
 
+	var student Student
+	err = json.Unmarshal([]byte(studentUpdateJSON), &student)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal student: %v", err)
+	}
+
+	fmt.Printf("exist one: %v\nrequest one: %v", existOne, student)
+	// Update
+	existOne.AdmissionYear = student.AdmissionYear
+	existOne.Graduated = student.Graduated
+	existOne.Major = student.Major
+	existOne.Name = student.Name
+	if student.School != "" {
+		existOne.School = student.School
+	}
+	fmt.Printf("finally: %v\n", existOne)
+
+	studentBytes, err := json.Marshal(existOne)
+	if err != nil {
+		return fmt.Errorf("failed to marshal student: %v", err)
+	}
 	// 修改学生信息
-	return ctx.GetStub().PutState(studentID, []byte(studentUpdateJSON))
+	return ctx.GetStub().PutState(studentID, studentBytes)
 }
 
 // QueryStudent 查询指定ID的学生信息
@@ -84,44 +138,41 @@ func (s *SmartContract) QueryStudent(ctx contractapi.TransactionContextInterface
 	err := AssertStateOwner(ctx, studentID)
 	if err != nil {
 		// not student state owner, check if admin
-		err = AssertAdmin(ctx, studentID)
+		err = AssertManager(ctx, studentID)
 		// not admin, return error
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	studentBytes, err := ctx.GetStub().GetState(studentID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get student: %v", err)
-	}
-	if studentBytes == nil {
-		return nil, fmt.Errorf("student not found: %s", studentID)
-	}
-
-	var student Student
-	err = json.Unmarshal(studentBytes, &student)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal student: %v", err)
-	}
-
-	return &student, nil
-}
-
-func (s *SmartContract) QueryAllStudents(ctx contractapi.TransactionContextInterface, pageSize int, bookmark string) ([]*Student, error) {
-	// 权限检查，假设教育局的管理员可以查询所有学生信息
-	err := AssertAdmin(ctx)
+	student, err := GetStudent(ctx, studentID)
 	if err != nil {
 		return nil, err
 	}
 
-	queryResults, _, err := ctx.GetStub().GetStateByRangeWithPagination("", "", int32(pageSize), bookmark)
+	msp := GetMSPID(ctx)
+	if AssertStateOwner(ctx, studentID) != nil && msp != "EducationBureauMSP" && msp != student.School {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	return student, nil
+}
+
+func (s *SmartContract) QueryAllStudents(ctx contractapi.TransactionContextInterface, pageSize int, bookmark string) (*PaginationQueryResult, error) {
+	// 权限检查，假设教育局的管理员可以查询所有学生信息
+	err := AssertManager(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	queryResults, meta, err := ctx.GetStub().GetStateByRangeWithPagination("", "", int32(pageSize), bookmark)
 	if err != nil {
 		return nil, err
 	}
 	defer queryResults.Close()
 
 	msp := GetMSPID(ctx)
+	fmt.Printf("user msp: %v \n", msp)
 
 	var students []*Student
 	for queryResults.HasNext() {
@@ -139,5 +190,13 @@ func (s *SmartContract) QueryAllStudents(ctx contractapi.TransactionContextInter
 		}
 	}
 
-	return students, nil
+	items := make([]interface{}, len(students))
+	for i, v := range students {
+		items[i] = v
+	}
+
+	return &PaginationQueryResult{
+		Items:    items,
+		Bookmark: meta.Bookmark,
+	}, nil
 }

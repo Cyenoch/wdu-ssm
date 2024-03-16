@@ -43,7 +43,12 @@ export async function getGatewayByUser(event: H3Event) {
     })
   }
   const peer = peers.find(peer => peer.msp === user.app_metadata.msp)!
-  const gateway = getGateway(peer, Buffer.from(user.app_metadata.certificate, 'utf-8'), Buffer.from(user.app_metadata.key, 'utf-8'))
+  console.info(`using peer: ${peer.endpoint}`)
+  const gateway = getGateway(
+    peer,
+    Buffer.from(user.app_metadata.certificate, 'utf-8'),
+    Buffer.from(user.app_metadata.key, 'utf-8'),
+  )
   return gateway
 }
 
@@ -79,6 +84,17 @@ export async function getContract(event: H3Event, org: Orgs, channel: string, co
   return {
     ...result,
     contract: result.network.getContract(contract),
+  }
+}
+
+export async function getContractByUser(event: H3Event) {
+  const gateway = await getGatewayByUser(event)
+  const network = gateway.getNetwork(NetworkConfig.contracts.sm.channel)
+  const contract = network.getContract(NetworkConfig.contracts.sm.name)
+  return {
+    gateway,
+    network,
+    contract,
   }
 }
 
