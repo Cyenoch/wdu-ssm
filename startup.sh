@@ -112,6 +112,7 @@ cd -
 echo "installing chaincode..."
 
 source set_bureau.sh
+rm sm.tar.gz
 (cd chaincode/sm; GO111MODULE=on go mod vendor)
 peer lifecycle chaincode package ./sm.tar.gz --path ./chaincode/sm --label sm_1.0
 

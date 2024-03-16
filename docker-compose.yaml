@@ -138,7 +138,7 @@ services:
 
   # 更多的Peer节点和CA服务可以按照类似的方式配置
 
-  # 教育局的CA服务
+  # Orderer的CA服务
   ca.orderer.edu.cn:
     container_name: ca.orderer.edu.cn
     image: hyperledger/fabric-ca:latest
