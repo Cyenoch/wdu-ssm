@@ -1,0 +1,91 @@
+{
+  "adminPrivateKey": {
+    "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/9e981f930942041b3a0f1d33bb78612b358d8ef75e71dd5c0389a08c97a23625_sk"
+  },
+  "name": "ssm-network",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "admin0",
+      "password": "admin0pw"
+    },
+    "enableAuthentication": true,
+    "organization": "EducationBureauMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "channels": {
+    "two-edu-channel": {
+      "peers": {
+        "peer0.school1.edu.cn": {},
+        "peer0.school2.edu.cn": {},
+        "peer0.bureau.edu.cn": {}
+      }
+    }
+  },
+  "organizations": {
+    "School1MSP": {
+      "mspid": "School1MSP",
+      "adminPrivateKey": {
+        "path": "../peer/school1.edu.cn/users/Admin0@school1.edu.cn/msp/keystore/b13831c32cd7b64e277e9fc41623877c0233958ea04cbd059de7492271742eab_sk"
+      },
+      "peers": [
+        "peer0.school1.edu.cn"
+      ],
+      "signedCert": {
+        "path": "../peer/school1.edu.cn/users/Admin0@school1.edu.cn/msp/signcerts/cert.pem"
+      }
+    },
+    "School2MSP": {
+      "mspid": "School2MSP",
+      "adminPrivateKey": {
+        "path": "../peer/school2.edu.cn/users/Admin0@school2.edu.cn/msp/keystore/e259418eae19b50202af4f475bb9b07481b1954760c29aed385d3d9e3190c1fa_sk"
+      },
+      "peers": [
+        "peer0.school2.edu.cn"
+      ],
+      "signedCert": {
+        "path": "../peer/school2.edu.cn/users/Admin0@school2.edu.cn/msp/signcerts/cert.pem"
+      }
+    },
+    "EducationBureauMSP": {
+      "mspid": "EducationBureauMSP",
+      "adminPrivateKey": {
+        "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/9e981f930942041b3a0f1d33bb78612b358d8ef75e71dd5c0389a08c97a23625_sk"
+      },
+      "peers": [
+        "peer0.bureau.edu.cn"
+      ],
+      "signedCert": {
+        "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/signcerts/cert.pem"
+      }
+    }
+  },
+  "peers": {
+    "peer0.school1.edu.cn": {
+      "tlsCACerts": {
+        "path": "../peer/school1.edu.cn/peers/peer0.school1.edu.cn/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.school1.edu.cn:7061"
+    },
+    "peer0.school2.edu.cn": {
+      "tlsCACerts": {
+        "path": "../peer/school2.edu.cn/peers/peer0.school2.edu.cn/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.school2.edu.cn:7071"
+    },
+    "peer0.bureau.edu.cn": {
+      "tlsCACerts": {
+        "path": "../peer/bureau.edu.cn/peers/peer0.bureau.edu.cn/tls/ca.crt"
+      },
+      "url": "grpcs://peer0.bureau.edu.cn:7051"
+    }
+  }
+}

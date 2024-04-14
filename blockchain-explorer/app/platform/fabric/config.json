@@ -1,0 +1,11 @@
+{
+	"network-configs": {
+		"ssm-network": {
+			"name": "SSM Network",
+			"profile": "./connection-profile/bureau.json",
+			"bootMode": "ALL",
+			"noOfBlocks": 0
+		}
+	},
+	"license": "Apache-2.0"
+}
