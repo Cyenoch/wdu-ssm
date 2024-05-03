@@ -211,17 +211,6 @@ services:
     networks:
       - ssm
 
-  explorer-pg:
-    container_name: explorer-pg
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: fabricexplorer
-    ports:
-      - "5432:5432"
-    volumes:
-      - explorer_dbdata:/var/lib/postgresql/data
-
 volumes:
   orderer0_data:
   peer0_bureau_data:

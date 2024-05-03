@@ -1,6 +1,6 @@
 {
   "adminPrivateKey": {
-    "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/9e981f930942041b3a0f1d33bb78612b358d8ef75e71dd5c0389a08c97a23625_sk"
+    "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/63246ad85ff0955abc87c48bc24cc35e9e9af0ef0f0a860f61147df4e5e8ef22_sk"
   },
   "name": "ssm-network",
   "version": "1.0.0",
@@ -34,7 +34,7 @@
     "School1MSP": {
       "mspid": "School1MSP",
       "adminPrivateKey": {
-        "path": "../peer/school1.edu.cn/users/Admin0@school1.edu.cn/msp/keystore/b13831c32cd7b64e277e9fc41623877c0233958ea04cbd059de7492271742eab_sk"
+        "path": "../peer/school1.edu.cn/users/Admin0@school1.edu.cn/msp/keystore/2b1a66c87e000f67cf7984ccc61fd31d1973a942dde537bdc53cdd7d619a894d_sk"
       },
       "peers": [
         "peer0.school1.edu.cn"
@@ -46,7 +46,7 @@
     "School2MSP": {
       "mspid": "School2MSP",
       "adminPrivateKey": {
-        "path": "../peer/school2.edu.cn/users/Admin0@school2.edu.cn/msp/keystore/e259418eae19b50202af4f475bb9b07481b1954760c29aed385d3d9e3190c1fa_sk"
+        "path": "../peer/school2.edu.cn/users/Admin0@school2.edu.cn/msp/keystore/4daf4d540fa3380a61ef47a9cdd09623429ecc57bd4cf9a5e1e5ad99c60b96ce_sk"
       },
       "peers": [
         "peer0.school2.edu.cn"
@@ -58,7 +58,7 @@
     "EducationBureauMSP": {
       "mspid": "EducationBureauMSP",
       "adminPrivateKey": {
-        "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/9e981f930942041b3a0f1d33bb78612b358d8ef75e71dd5c0389a08c97a23625_sk"
+        "path": "../peer/bureau.edu.cn/users/Admin0@bureau.edu.cn/msp/keystore/63246ad85ff0955abc87c48bc24cc35e9e9af0ef0f0a860f61147df4e5e8ef22_sk"
       },
       "peers": [
         "peer0.bureau.edu.cn"

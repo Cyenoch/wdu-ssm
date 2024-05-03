@@ -3,3 +3,6 @@
 
 修改文件：
 blockchain-explorer/app/platform/fabric/connection-profile/bureau.json
+
+删除文件：
+blockchain-explorer/wallet
